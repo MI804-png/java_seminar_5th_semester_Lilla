@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+      layout:decorate="~{fragments/layout}">
+
+<div layout:fragment="content">
+    <!-- Database Overview -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-number" th:text="${totalPersons}">0</div>
+            <div class="stat-label">Total Persons</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" th:text="${totalVehicles}">0</div>
+            <div class="stat-label">Total Vehicles</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" th:text="${totalPhones}">0</div>
+            <div class="stat-label">Phone Numbers</div>
+        </div>
+    </div>
+
+    <!-- Persons Table -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-users"></i> Registered Persons
+            </h3>
+        </div>
+        
+        <div th:if="${#lists.isEmpty(persons)}" class="alert alert-info">
+            <i class="fas fa-info-circle"></i> No persons found in the database.
+        </div>
+        
+        <div th:if="${not #lists.isEmpty(persons)}">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Registration Number</th>
+                        <th>Height (cm)</th>
+                        <th>Vehicle</th>
+                        <th>Phone Numbers</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="person : ${persons}">
+                        <td th:text="${person.id}">1</td>
+                        <td th:text="${person.name}">John Smith</td>
+                        <td th:text="${person.regnumber}">ABC123</td>
+                        <td th:text="${person.height}">175</td>
+                        <td>
+                            <span th:if="${person.vehicle != null}" 
+                                  th:text="${person.vehicle.brand + ' (' + person.vehicle.color + ')'}">
+                                Ford (red)
+                            </span>
+                            <span th:if="${person.vehicle == null}" class="text-muted">
+                                No vehicle
+                            </span>
+                        </td>
+                        <td>
+                            <span th:if="${person.phones != null and not #lists.isEmpty(person.phones)}">
+                                <span th:each="phone, iterStat : ${person.phones}">
+                                    <span th:text="${phone.number}">123456</span>
+                                    <span th:if="${not iterStat.last}">, </span>
+                                </span>
+                            </span>
+                            <span th:if="${person.phones == null or #lists.isEmpty(person.phones)}" class="text-muted">
+                                No phones
+                            </span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Vehicles Table -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-car"></i> Registered Vehicles
+            </h3>
+        </div>
+        
+        <div th:if="${#lists.isEmpty(vehicles)}" class="alert alert-info">
+            <i class="fas fa-info-circle"></i> No vehicles found in the database.
+        </div>
+        
+        <div th:if="${not #lists.isEmpty(vehicles)}">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Registration Number</th>
+                        <th>Brand</th>
+                        <th>Color</th>
+                        <th>Owner</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="vehicle : ${vehicles}">
+                        <td th:text="${vehicle.regnum}">ABC123</td>
+                        <td th:text="${vehicle.brand}">Ford</td>
+                        <td>
+                            <span th:text="${vehicle.color}" 
+                                  th:style="'color: ' + ${vehicle.color == 'red' ? '#e74c3c' : 
+                                                          vehicle.color == 'blue' ? '#3498db' : 
+                                                          vehicle.color == 'white' ? '#7f8c8d' : '#2ecc71'}">
+                                red
+                            </span>
+                        </td>
+                        <td>
+                            <span th:if="${vehicle.owner != null}" th:text="${vehicle.owner.name}">
+                                John Smith
+                            </span>
+                            <span th:if="${vehicle.owner == null}" class="text-muted">
+                                No owner
+                            </span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Phone Numbers Table -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-phone"></i> Phone Numbers
+            </h3>
+        </div>
+        
+        <div th:if="${#lists.isEmpty(phones)}" class="alert alert-info">
+            <i class="fas fa-info-circle"></i> No phone numbers found in the database.
+        </div>
+        
+        <div th:if="${not #lists.isEmpty(phones)}">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Phone Number</th>
+                        <th>Owner</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="phone : ${phones}">
+                        <td th:text="${phone.id}">1</td>
+                        <td th:text="${phone.number}">345678</td>
+                        <td>
+                            <span th:if="${phone.person != null}" th:text="${phone.person.name}">
+                                John Smith
+                            </span>
+                            <span th:if="${phone.person == null}" class="text-muted">
+                                Unknown owner
+                            </span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Database Information -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-info-circle"></i> Database Information
+            </h3>
+        </div>
+        
+        <div class="row">
+            <div class="col-6">
+                <h4><i class="fas fa-database"></i> Database Schema</h4>
+                <p>This system uses a relational database with three main tables:</p>
+                <ul>
+                    <li><strong>Persons:</strong> Stores personal information including name, registration number, and height</li>
+                    <li><strong>Vehicles:</strong> Contains vehicle details like registration number, brand, and color</li>
+                    <li><strong>Phones:</strong> Manages phone numbers associated with persons</li>
+                </ul>
+                
+                <h4><i class="fas fa-link"></i> Relationships</h4>
+                <ul>
+                    <li>One person can have multiple phone numbers</li>
+                    <li>One person can own one vehicle (linked by registration number)</li>
+                    <li>Each vehicle belongs to one person</li>
+                </ul>
+            </div>
+            
+            <div class="col-6">
+                <h4><i class="fas fa-tools"></i> Available Actions</h4>
+                <p>Use the following features to interact with the data:</p>
+                <ul>
+                    <li><a th:href="@{/crud}" class="btn btn-sm btn-primary">CRUD Operations</a> - Manage person records</li>
+                    <li><a th:href="@{/chart}" class="btn btn-sm btn-success">Statistics</a> - View data visualizations</li>
+                    <li><a th:href="@{/api/persons}" class="btn btn-sm btn-warning">REST API</a> - Access data programmatically</li>
+                </ul>
+                
+                <h4><i class="fas fa-chart-bar"></i> Quick Statistics</h4>
+                <ul>
+                    <li>Total records: <strong th:text="${totalPersons + totalVehicles + totalPhones}">0</strong></li>
+                    <li>Average phones per person: <strong th:text="${totalPersons > 0 ? #numbers.formatDecimal(totalPhones / totalPersons, 1, 1) : 0}">0</strong></li>
+                    <li>Vehicle ownership rate: <strong th:text="${totalPersons > 0 ? #numbers.formatDecimal((totalVehicles / totalPersons) * 100, 1, 1) : 0}">0</strong>%</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block layout:fragment="scripts">
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add hover effects to table rows
+            const rows = document.querySelectorAll('table tbody tr');
+            rows.forEach(row => {
+                row.addEventListener('mouseenter', function() {
+                    this.style.backgroundColor = '#f8f9fa';
+                });
+                row.addEventListener('mouseleave', function() {
+                    this.style.backgroundColor = '';
+                });
+            });
+        });
+    </script>
+</th:block>
+
+</html>

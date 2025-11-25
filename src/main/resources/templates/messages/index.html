@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+      layout:decorate="~{fragments/layout}">
+
+<div layout:fragment="content">
+    <!-- Messages Statistics -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-number" th:text="${totalMessages}">0</div>
+            <div class="stat-label">Total Messages</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" th:text="${#lists.isEmpty(messages) ? 0 : #temporals.format(messages[0].sentAt, 'MMM dd')}">Today</div>
+            <div class="stat-label">Latest Message</div>
+        </div>
+    </div>
+
+    <!-- Messages List -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-comments"></i> Contact Messages
+            </h3>
+            <p>Messages are displayed in descending order (newest first)</p>
+        </div>
+        
+        <div th:if="${#lists.isEmpty(messages)}" class="alert alert-info">
+            <i class="fas fa-info-circle"></i> No messages found. 
+            <a th:href="@{/contact}" class="btn btn-sm btn-primary">Send the first message</a>
+        </div>
+        
+        <div th:if="${not #lists.isEmpty(messages)}">
+            <div th:each="message, iterStat : ${messages}" class="message-item" 
+                 th:style="${iterStat.index % 2 == 0 ? 'background-color: #f8f9fa;' : ''}">
+                
+                <div class="message-header">
+                    <div class="row">
+                        <div class="col-6">
+                            <h4 class="message-subject">
+                                <i class="fas fa-envelope"></i> 
+                                <span th:text="${message.subject}">Subject</span>
+                            </h4>
+                            <div class="message-meta">
+                                <span class="sender-info">
+                                    <i class="fas fa-user"></i> 
+                                    <strong th:text="${message.name}">Sender Name</strong>
+                                </span>
+                                <span class="email-info">
+                                    <i class="fas fa-at"></i> 
+                                    <a th:href="'mailto:' + ${message.email}" th:text="${message.email}">email@example.com</a>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-6 text-right">
+                            <div class="message-timestamp">
+                                <i class="fas fa-clock"></i>
+                                <span th:text="${#temporals.format(message.sentAt, 'MMM dd, yyyy HH:mm')}">
+                                    Nov 25, 2025 10:30
+                                </span>
+                            </div>
+                            <div class="message-id text-muted">
+                                ID: <span th:text="${message.id}">1</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="message-content">
+                    <div class="message-body">
+                        <p th:text="${message.message}">Message content goes here...</p>
+                    </div>
+                </div>
+                
+                <div class="message-actions">
+                    <button class="btn btn-sm btn-secondary" onclick="replyToMessage(this)"
+                            th:attr="data-email=${message.email}, data-subject=${message.subject}, data-name=${message.name}">
+                        <i class="fas fa-reply"></i> Reply
+                    </button>
+                    <button class="btn btn-sm btn-info" onclick="copyEmail(this)" 
+                            th:attr="data-email=${message.email}">
+                        <i class="fas fa-copy"></i> Copy Email
+                    </button>
+                </div>
+                
+                <hr th:unless="${iterStat.last}" style="margin: 1.5rem 0;">
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-tools"></i> Quick Actions
+            </h3>
+        </div>
+        
+        <div class="row">
+            <div class="col-4">
+                <a th:href="@{/contact}" class="btn btn-primary btn-lg" style="width: 100%;">
+                    <i class="fas fa-plus"></i><br>
+                    Send New Message
+                </a>
+            </div>
+            <div class="col-4">
+                <button onclick="refreshMessages()" class="btn btn-success btn-lg" style="width: 100%;">
+                    <i class="fas fa-sync"></i><br>
+                    Refresh Messages
+                </button>
+            </div>
+            <div class="col-4">
+                <button onclick="exportMessages()" class="btn btn-warning btn-lg" style="width: 100%;">
+                    <i class="fas fa-download"></i><br>
+                    Export Data
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Message Statistics -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-chart-bar"></i> Message Statistics
+            </h3>
+        </div>
+        
+        <div class="row" th:if="${not #lists.isEmpty(messages)}">
+            <div class="col-6">
+                <canvas id="messageChart" width="400" height="200"></canvas>
+            </div>
+            <div class="col-6">
+                <h4><i class="fas fa-info-circle"></i> Message Overview</h4>
+                <ul>
+                    <li><strong>Total Messages:</strong> <span th:text="${totalMessages}">0</span></li>
+                    <li><strong>Latest Message:</strong> 
+                        <span th:text="${#temporals.format(messages[0].sentAt, 'MMM dd, yyyy HH:mm')}">
+                            Nov 25, 2025 10:30
+                        </span>
+                    </li>
+                    <li><strong>Oldest Message:</strong> 
+                        <span th:text="${#temporals.format(messages[totalMessages-1].sentAt, 'MMM dd, yyyy HH:mm')}">
+                            Nov 20, 2025 09:15
+                        </span>
+                    </li>
+                    <li><strong>Average per Day:</strong> 
+                        <span th:text="${totalMessages > 0 ? #numbers.formatDecimal(totalMessages / 7.0, 1, 1) : 0}">0</span>
+                    </li>
+                </ul>
+                
+                <div class="alert alert-info">
+                    <h5><i class="fas fa-lock"></i> Access Control</h5>
+                    <p>Only registered users and administrators can view contact messages. 
+                       This ensures privacy and security of user communications.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block layout:fragment="scripts">
+    <script>
+        // Message functionality
+        function replyToMessage(button) {
+            const email = button.getAttribute('data-email');
+            const subject = button.getAttribute('data-subject');
+            const name = button.getAttribute('data-name');
+            
+            const replySubject = subject.startsWith('Re:') ? subject : 'Re: ' + subject;
+            const mailtoUrl = `mailto:${email}?subject=${encodeURIComponent(replySubject)}`;
+            
+            window.location.href = mailtoUrl;
+        }
+        
+        function copyEmail(button) {
+            const email = button.getAttribute('data-email');
+            
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(email).then(() => {
+                    showAlert('Email address copied to clipboard!', 'success');
+                });
+            } else {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = email;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showAlert('Email address copied to clipboard!', 'success');
+            }
+        }
+        
+        function refreshMessages() {
+            location.reload();
+        }
+        
+        function exportMessages() {
+            // Simple CSV export
+            const messages = Array.from(document.querySelectorAll('.message-item')).map(item => {
+                const subject = item.querySelector('.message-subject span').textContent;
+                const name = item.querySelector('.sender-info strong').textContent;
+                const email = item.querySelector('.email-info a').textContent;
+                const timestamp = item.querySelector('.message-timestamp span').textContent;
+                const content = item.querySelector('.message-body p').textContent;
+                
+                return `"${subject}","${name}","${email}","${timestamp}","${content.replace(/"/g, '""')}"`;
+            }).join('\n');
+            
+            const csv = 'Subject,Name,Email,Timestamp,Message\n' + messages;
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `messages_${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            
+            window.URL.revokeObjectURL(url);
+            showAlert('Messages exported successfully!', 'success');
+        }
+        
+        // Initialize chart if messages exist
+        document.addEventListener('DOMContentLoaded', function() {
+            const chartCanvas = document.getElementById('messageChart');
+            if (chartCanvas && typeof Chart !== 'undefined') {
+                // Create a simple chart showing messages over time
+                const ctx = chartCanvas.getContext('2d');
+                
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['7 days ago', '6 days ago', '5 days ago', '4 days ago', '3 days ago', '2 days ago', 'Yesterday', 'Today'],
+                        datasets: [{
+                            label: 'Messages Received',
+                            data: [2, 1, 3, 2, 4, 1, 2, 3], // Sample data
+                            borderColor: '#3498db',
+                            backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Message Activity (Last 7 Days)'
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    stepSize: 1
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // Add message highlighting on hover
+            const messageItems = document.querySelectorAll('.message-item');
+            messageItems.forEach(item => {
+                item.addEventListener('mouseenter', function() {
+                    this.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+                    this.style.transform = 'translateY(-2px)';
+                    this.style.transition = 'all 0.3s ease';
+                });
+                
+                item.addEventListener('mouseleave', function() {
+                    this.style.boxShadow = '';
+                    this.style.transform = '';
+                });
+            });
+        });
+    </script>
+    
+    <style>
+        .message-item {
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--secondary-color);
+            border-radius: 8px;
+        }
+        
+        .message-header {
+            margin-bottom: 1rem;
+        }
+        
+        .message-subject {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .message-meta {
+            display: flex;
+            gap: 1rem;
+            color: #666;
+            font-size: 0.875rem;
+        }
+        
+        .message-timestamp {
+            font-weight: 600;
+            color: var(--secondary-color);
+        }
+        
+        .message-content {
+            margin: 1rem 0;
+        }
+        
+        .message-body {
+            background: white;
+            padding: 1rem;
+            border-radius: 5px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .message-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+    </style>
+</th:block>
+
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+      layout:decorate="~{fragments/layout}">
+
+<div layout:fragment="content">
+    <div class="row">
+        <div class="col-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-user-plus"></i> Create New Account
+                    </h3>
+                </div>
+                
+                <form th:action="@{/register}" th:object="${user}" method="post">
+                    <div class="form-group">
+                        <label for="username" class="form-label">
+                            <i class="fas fa-user"></i> Username *
+                        </label>
+                        <input type="text" id="username" th:field="*{username}" class="form-control" 
+                               placeholder="Choose a username (3-20 characters)" required>
+                        <div class="form-error" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email" class="form-label">
+                            <i class="fas fa-envelope"></i> Email Address *
+                        </label>
+                        <input type="email" id="email" th:field="*{email}" class="form-control" 
+                               placeholder="Enter your email address" required>
+                        <div class="form-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="fullName" class="form-label">
+                            <i class="fas fa-id-card"></i> Full Name *
+                        </label>
+                        <input type="text" id="fullName" th:field="*{fullName}" class="form-control" 
+                               placeholder="Enter your full name" required>
+                        <div class="form-error" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password" class="form-label">
+                            <i class="fas fa-lock"></i> Password *
+                        </label>
+                        <input type="password" id="password" th:field="*{password}" class="form-control" 
+                               placeholder="Enter password (minimum 6 characters)" required>
+                        <div class="form-error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="fas fa-user-plus"></i> Register
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="text-center">
+                    <p>Already have an account? 
+                        <a th:href="@{/login}" class="btn btn-primary">
+                            <i class="fas fa-sign-in-alt"></i> Login Here
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-info-circle"></i> Registration Information
+                    </h3>
+                </div>
+                
+                <h4><i class="fas fa-check-circle"></i> Account Benefits</h4>
+                <ul>
+                    <li><strong>Message Access:</strong> View all contact messages sent through the system</li>
+                    <li><strong>CRUD Operations:</strong> Manage person records with full create, read, update, delete capabilities</li>
+                    <li><strong>API Access:</strong> Use RESTful endpoints for data integration</li>
+                    <li><strong>Secure Access:</strong> Your data is protected with industry-standard encryption</li>
+                </ul>
+                
+                <h4><i class="fas fa-exclamation-triangle"></i> Registration Requirements</h4>
+                <ul>
+                    <li>Username must be unique and 3-20 characters long</li>
+                    <li>Valid email address is required</li>
+                    <li>Password must be at least 6 characters</li>
+                    <li>Full name is required for identification</li>
+                </ul>
+                
+                <div class="alert alert-info">
+                    <h5><i class="fas fa-shield-alt"></i> Privacy & Security</h5>
+                    <p>All new accounts are automatically assigned the "Registered User" role. 
+                       Your password is encrypted and never stored in plain text. 
+                       We respect your privacy and will never share your information.</p>
+                </div>
+                
+                <h4><i class="fas fa-users"></i> User Roles</h4>
+                <ul>
+                    <li><strong>Registered User:</strong> Access to messages and CRUD operations</li>
+                    <li><strong>Admin:</strong> Full system access (contact administrator for upgrade)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+</html>

@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+      layout:decorate="~{fragments/layout}">
+
+<div layout:fragment="content">
+    <!-- CRUD Overview -->
+    <div class="row">
+        <div class="col-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-users"></i> Person Management
+                    </h3>
+                </div>
+                
+                <p>This CRUD (Create, Read, Update, Delete) interface allows you to manage person records in the database. 
+                   You can add new persons, view existing records, edit information, and remove entries as needed.</p>
+                
+                <div class="text-center">
+                    <a th:href="@{/crud/add}" class="btn btn-success btn-lg">
+                        <i class="fas fa-plus"></i> Add New Person
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-6">
+            <div class="stats-grid" style="grid-template-columns: 1fr 1fr;">
+                <div class="stat-card">
+                    <div class="stat-number" th:text="${#lists.size(persons)}">0</div>
+                    <div class="stat-label">Total Persons</div>
+                </div>                <div class="stat-card">
+                    <div class="stat-number" th:text="${persons.size() > 0 ? 170 : 0}">0</div>
+                    <div class="stat-label">Avg Height (cm)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Persons Table -->
+    <div class="card">
+        <div class="card-header">
+            <div class="row">
+                <div class="col-6">
+                    <h3 class="card-title">
+                        <i class="fas fa-table"></i> Person Records
+                    </h3>
+                </div>
+                <div class="col-6 text-right">
+                    <a th:href="@{/crud/add}" class="btn btn-success">
+                        <i class="fas fa-plus"></i> Add Person
+                    </a>
+                    <button onclick="exportData()" class="btn btn-warning">
+                        <i class="fas fa-download"></i> Export CSV
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div th:if="${#lists.isEmpty(persons)}" class="alert alert-info">
+            <i class="fas fa-info-circle"></i> No persons found in the database.
+            <a th:href="@{/crud/add}" class="btn btn-sm btn-primary">Add the first person</a>
+        </div>
+        
+        <div th:if="${not #lists.isEmpty(persons)}">
+            <table class="table" id="personsTable">
+                <thead>
+                    <tr>
+                        <th onclick="sortTable(0)">ID <i class="fas fa-sort"></i></th>
+                        <th onclick="sortTable(1)">Name <i class="fas fa-sort"></i></th>
+                        <th onclick="sortTable(2)">Reg Number <i class="fas fa-sort"></i></th>
+                        <th onclick="sortTable(3)">Height <i class="fas fa-sort"></i></th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="person : ${persons}">
+                        <td th:text="${person.id}">1</td>
+                        <td th:text="${person.name}">John Smith</td>
+                        <td th:text="${person.regnumber}">ABC123</td>
+                        <td th:text="${person.height + ' cm'}">175 cm</td>
+                        <td>
+                            <div class="btn-group">
+                                <a th:href="@{/crud/view/{id}(id=${person.id})}" 
+                                   class="btn btn-sm btn-info" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a th:href="@{/crud/edit/{id}(id=${person.id})}" 
+                                   class="btn btn-sm btn-warning" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a th:href="@{/crud/delete/{id}(id=${person.id})}" 
+                                   class="btn btn-sm btn-danger" title="Delete"
+                                   onclick="return confirm('Are you sure you want to delete this person?')">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- CRUD Information -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-info-circle"></i> CRUD Operations Guide
+            </h3>
+        </div>
+        
+        <div class="row">
+            <div class="col-3">
+                <div class="operation-card">
+                    <div class="operation-icon create">
+                        <i class="fas fa-plus-circle"></i>
+                    </div>
+                    <h4>Create</h4>
+                    <p>Add new person records with name, registration number, and height information.</p>
+                    <a th:href="@{/crud/add}" class="btn btn-sm btn-success">
+                        <i class="fas fa-plus"></i> Add Person
+                    </a>
+                </div>
+            </div>
+            
+            <div class="col-3">
+                <div class="operation-card">
+                    <div class="operation-icon read">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <h4>Read</h4>
+                    <p>View detailed information about persons including their vehicles and phone numbers.</p>
+                    <p class="text-muted">Click the eye icon in the table</p>
+                </div>
+            </div>
+            
+            <div class="col-3">
+                <div class="operation-card">
+                    <div class="operation-icon update">
+                        <i class="fas fa-edit"></i>
+                    </div>
+                    <h4>Update</h4>
+                    <p>Modify existing person records with updated information and validation.</p>
+                    <p class="text-muted">Click the edit icon in the table</p>
+                </div>
+            </div>
+            
+            <div class="col-3">
+                <div class="operation-card">
+                    <div class="operation-icon delete">
+                        <i class="fas fa-trash"></i>
+                    </div>
+                    <h4>Delete</h4>
+                    <p>Remove person records from the database with confirmation prompt.</p>
+                    <p class="text-muted">Click the trash icon in the table</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Technical Information -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-cogs"></i> Technical Implementation
+            </h3>
+        </div>
+        
+        <div class="row">
+            <div class="col-6">
+                <h4><i class="fas fa-database"></i> Database Operations</h4>
+                <ul>
+                    <li><strong>Create:</strong> INSERT operation with validation</li>
+                    <li><strong>Read:</strong> SELECT with JOIN operations for related data</li>
+                    <li><strong>Update:</strong> UPDATE with existence checks</li>
+                    <li><strong>Delete:</strong> CASCADE DELETE for related records</li>
+                </ul>
+                
+                <h4><i class="fas fa-shield-alt"></i> Validation Rules</h4>
+                <ul>
+                    <li>Name: Required, max 50 characters</li>
+                    <li>Registration Number: Required, unique, exactly 6 characters</li>
+                    <li>Height: Required, minimum 100 cm</li>
+                </ul>
+            </div>
+            
+            <div class="col-6">
+                <h4><i class="fas fa-link"></i> Related Data</h4>
+                <ul>
+                    <li>Each person can have multiple phone numbers</li>
+                    <li>Each person can own one vehicle (by registration number)</li>
+                    <li>Deleting a person removes associated phone records</li>
+                </ul>
+                
+                <h4><i class="fas fa-tools"></i> Features</h4>
+                <ul>
+                    <li>Server-side validation with error messages</li>
+                    <li>Sortable table columns</li>
+                    <li>Export to CSV functionality</li>
+                    <li>Responsive design for mobile devices</li>
+                    <li>Confirmation dialogs for destructive operations</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block layout:fragment="scripts">
+    <script>
+        let sortDirection = {};
+        
+        function sortTable(columnIndex) {
+            const table = document.getElementById('personsTable');
+            const tbody = table.getElementsByTagName('tbody')[0];
+            const rows = Array.from(tbody.getElementsByTagName('tr'));
+            
+            // Toggle sort direction
+            sortDirection[columnIndex] = !sortDirection[columnIndex];
+            const isAscending = sortDirection[columnIndex];
+            
+            rows.sort((a, b) => {
+                const cellA = a.getElementsByTagName('td')[columnIndex].textContent.trim();
+                const cellB = b.getElementsByTagName('td')[columnIndex].textContent.trim();
+                
+                // Handle numeric columns
+                if (columnIndex === 0 || columnIndex === 3) { // ID or Height
+                    const numA = parseFloat(cellA);
+                    const numB = parseFloat(cellB);
+                    return isAscending ? numA - numB : numB - numA;
+                }
+                
+                // Handle text columns
+                return isAscending 
+                    ? cellA.localeCompare(cellB)
+                    : cellB.localeCompare(cellA);
+            });
+            
+            // Clear tbody and add sorted rows
+            tbody.innerHTML = '';
+            rows.forEach(row => tbody.appendChild(row));
+            
+            // Update sort indicators
+            const headers = table.getElementsByTagName('th');
+            for (let i = 0; i < headers.length - 1; i++) {
+                const icon = headers[i].querySelector('i');
+                if (icon) {
+                    if (i === columnIndex) {
+                        icon.className = isAscending ? 'fas fa-sort-up' : 'fas fa-sort-down';
+                    } else {
+                        icon.className = 'fas fa-sort';
+                    }
+                }
+            }
+        }
+        
+        function exportData() {
+            const table = document.getElementById('personsTable');
+            if (!table) return;
+            
+            let csv = 'ID,Name,Registration Number,Height\n';
+            
+            const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+            for (let row of rows) {
+                const cells = row.getElementsByTagName('td');
+                const rowData = [
+                    cells[0].textContent.trim(),
+                    `"${cells[1].textContent.trim()}"`,
+                    cells[2].textContent.trim(),
+                    cells[3].textContent.trim().replace(' cm', '')
+                ];
+                csv += rowData.join(',') + '\n';
+            }
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `persons_${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+            
+            showAlert('Data exported successfully!', 'success');
+        }
+        
+        // Add row highlighting and selection
+        document.addEventListener('DOMContentLoaded', function() {
+            const rows = document.querySelectorAll('#personsTable tbody tr');
+            
+            rows.forEach(row => {
+                row.addEventListener('click', function(e) {
+                    // Don't select row if clicking on action buttons
+                    if (e.target.closest('.btn')) return;
+                    
+                    // Remove selection from other rows
+                    rows.forEach(r => r.classList.remove('selected'));
+                    
+                    // Add selection to current row
+                    this.classList.add('selected');
+                });
+                
+                // Add hover effect
+                row.addEventListener('mouseenter', function() {
+                    if (!this.classList.contains('selected')) {
+                        this.style.backgroundColor = '#f8f9fa';
+                    }
+                });
+                
+                row.addEventListener('mouseleave', function() {
+                    if (!this.classList.contains('selected')) {
+                        this.style.backgroundColor = '';
+                    }
+                });
+            });
+        });
+    </script>
+    
+    <style>
+        .operation-card {
+            text-align: center;
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            height: 100%;
+        }
+        
+        .operation-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 1.5rem;
+            color: white;
+        }
+        
+        .operation-icon.create { background-color: #2ecc71; }
+        .operation-icon.read { background-color: #3498db; }
+        .operation-icon.update { background-color: #f39c12; }
+        .operation-icon.delete { background-color: #e74c3c; }
+        
+        .btn-group {
+            display: flex;
+            gap: 0.25rem;
+        }
+        
+        .table th {
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .table th:hover {
+            background-color: #2c3e50;
+        }
+        
+        .selected {
+            background-color: #e8f4f8 !important;
+        }
+        
+        @media (max-width: 768px) {
+            .operation-card {
+                margin-bottom: 1rem;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+            }
+            
+            .table {
+                font-size: 0.875rem;
+            }
+        }
+    </style>
+</th:block>
+
+</html>

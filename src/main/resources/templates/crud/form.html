@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+      layout:decorate="~{fragments/layout}">
+
+<div layout:fragment="content">
+    <div class="row">
+        <div class="col-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i th:class="${action == 'Add' ? 'fas fa-plus' : 'fas fa-edit'}"></i> 
+                        <span th:text="${action}">Add</span> Person
+                    </h3>
+                </div>
+                
+                <form th:action="${action == 'Add' ? '/crud/add' : '/crud/edit/' + person.id}" 
+                      th:object="${person}" method="post" id="personForm">
+                    
+                    <div class="form-group">
+                        <label for="name" class="form-label">
+                            <i class="fas fa-user"></i> Full Name *
+                        </label>
+                        <input type="text" id="name" th:field="*{name}" class="form-control" 
+                               placeholder="Enter full name (max 50 characters)" required maxlength="50">
+                        <div class="form-error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="regnumber" class="form-label">
+                            <i class="fas fa-id-card"></i> Registration Number *
+                        </label>
+                        <input type="text" id="regnumber" th:field="*{regnumber}" class="form-control" 
+                               placeholder="Enter registration number (exactly 6 characters)" 
+                               required maxlength="6" minlength="6" pattern="[A-Za-z0-9]{6}">
+                        <div class="form-help">
+                            <small class="text-muted">
+                                <i class="fas fa-info-circle"></i> 
+                                Must be exactly 6 alphanumeric characters (e.g., ABC123)
+                            </small>
+                        </div>
+                        <div class="form-error" th:if="${#fields.hasErrors('regnumber')}" th:errors="*{regnumber}"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="height" class="form-label">
+                            <i class="fas fa-ruler-vertical"></i> Height (cm) *
+                        </label>
+                        <input type="number" id="height" th:field="*{height}" class="form-control" 
+                               placeholder="Enter height in centimeters" required min="100" max="300">
+                        <div class="form-help">
+                            <small class="text-muted">
+                                <i class="fas fa-info-circle"></i> 
+                                Height must be between 100 and 300 centimeters
+                            </small>
+                        </div>
+                        <div class="form-error" th:if="${#fields.hasErrors('height')}" th:errors="*{height}"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-6">
+                                <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">
+                                    <i th:class="${action == 'Add' ? 'fas fa-plus' : 'fas fa-save'}"></i> 
+                                    <span th:text="${action == 'Add' ? 'Add Person' : 'Update Person'}">Add Person</span>
+                                </button>
+                            </div>
+                            <div class="col-6">
+                                <a th:href="@{/crud}" class="btn btn-secondary btn-lg" style="width: 100%;">
+                                    <i class="fas fa-times"></i> Cancel
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="col-4">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-info-circle"></i> Form Information
+                    </h3>
+                </div>
+                
+                <h4><i class="fas fa-check-circle"></i> Validation Rules</h4>
+                <div class="validation-rule">
+                    <div class="rule-icon valid" id="nameValidation">
+                        <i class="fas fa-times"></i>
+                    </div>
+                    <span>Name: 1-50 characters</span>
+                </div>
+                
+                <div class="validation-rule">
+                    <div class="rule-icon valid" id="regnumberValidation">
+                        <i class="fas fa-times"></i>
+                    </div>
+                    <span>Registration: Exactly 6 alphanumeric characters</span>
+                </div>
+                
+                <div class="validation-rule">
+                    <div class="rule-icon valid" id="heightValidation">
+                        <i class="fas fa-times"></i>
+                    </div>
+                    <span>Height: 100-300 cm</span>
+                </div>
+                
+                <h4><i class="fas fa-lightbulb"></i> Tips</h4>
+                <ul>
+                    <li>Registration numbers must be unique in the system</li>
+                    <li>All fields marked with * are required</li>
+                    <li>Changes are saved immediately upon form submission</li>
+                    <li>Use realistic height values for data integrity</li>
+                </ul>
+                
+                <h4><i class="fas fa-link"></i> Related Data</h4>
+                <p>After creating a person, you can:</p>
+                <ul>
+                    <li>Add phone numbers via the database interface</li>
+                    <li>Associate a vehicle with the same registration number</li>
+                    <li>View complete person details in the CRUD table</li>
+                </ul>
+                
+                <div class="alert alert-warning">
+                    <h5><i class="fas fa-exclamation-triangle"></i> Important Note</h5>
+                    <p>The registration number links persons to vehicles. Make sure to use the same 
+                       registration number for both person and vehicle records if they are related.</p>
+                </div>
+            </div>
+            
+            <!-- Preview Card -->
+            <div class="card" id="previewCard" style="display: none;">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-eye"></i> Live Preview
+                    </h3>
+                </div>
+                
+                <div class="preview-content">
+                    <div class="preview-field">
+                        <strong>Name:</strong> <span id="previewName">-</span>
+                    </div>
+                    <div class="preview-field">
+                        <strong>Registration:</strong> <span id="previewRegnumber">-</span>
+                    </div>
+                    <div class="preview-field">
+                        <strong>Height:</strong> <span id="previewHeight">-</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sample Data -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-database"></i> Sample Data Examples
+            </h3>
+        </div>
+        
+        <div class="row">
+            <div class="col-4">
+                <div class="sample-card" onclick="fillSampleData(1)">
+                    <h5>Sample Person 1</h5>
+                    <p><strong>Name:</strong> Emma Johnson</p>
+                    <p><strong>Registration:</strong> EJ2025</p>
+                    <p><strong>Height:</strong> 165 cm</p>
+                    <button class="btn btn-sm btn-primary">Use This Data</button>
+                </div>
+            </div>
+            
+            <div class="col-4">
+                <div class="sample-card" onclick="fillSampleData(2)">
+                    <h5>Sample Person 2</h5>
+                    <p><strong>Name:</strong> Michael Brown</p>
+                    <p><strong>Registration:</strong> MB7890</p>
+                    <p><strong>Height:</strong> 180 cm</p>
+                    <button class="btn btn-sm btn-primary">Use This Data</button>
+                </div>
+            </div>
+            
+            <div class="col-4">
+                <div class="sample-card" onclick="fillSampleData(3)">
+                    <h5>Sample Person 3</h5>
+                    <p><strong>Name:</strong> Sarah Wilson</p>
+                    <p><strong>Registration:</strong> SW4567</p>
+                    <p><strong>Height:</strong> 172 cm</p>
+                    <button class="btn btn-sm btn-primary">Use This Data</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block layout:fragment="scripts">
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const nameField = document.getElementById('name');
+            const regnumberField = document.getElementById('regnumber');
+            const heightField = document.getElementById('height');
+            
+            // Real-time validation
+            nameField.addEventListener('input', validateName);
+            regnumberField.addEventListener('input', validateRegnumber);
+            heightField.addEventListener('input', validateHeight);
+            
+            // Live preview
+            nameField.addEventListener('input', updatePreview);
+            regnumberField.addEventListener('input', updatePreview);
+            heightField.addEventListener('input', updatePreview);
+            
+            // Initial validation
+            validateName();
+            validateRegnumber();
+            validateHeight();
+            updatePreview();
+        });
+        
+        function validateName() {
+            const field = document.getElementById('name');
+            const validation = document.getElementById('nameValidation');
+            const value = field.value.trim();
+            
+            if (value.length > 0 && value.length <= 50) {
+                validation.className = 'rule-icon valid';
+                validation.innerHTML = '<i class="fas fa-check"></i>';
+                field.classList.remove('is-invalid');
+                field.classList.add('is-valid');
+            } else {
+                validation.className = 'rule-icon invalid';
+                validation.innerHTML = '<i class="fas fa-times"></i>';
+                if (value.length > 0) {
+                    field.classList.add('is-invalid');
+                    field.classList.remove('is-valid');
+                }
+            }
+        }
+        
+        function validateRegnumber() {
+            const field = document.getElementById('regnumber');
+            const validation = document.getElementById('regnumberValidation');
+            const value = field.value.trim();
+            const pattern = /^[A-Za-z0-9]{6}$/;
+            
+            if (pattern.test(value)) {
+                validation.className = 'rule-icon valid';
+                validation.innerHTML = '<i class="fas fa-check"></i>';
+                field.classList.remove('is-invalid');
+                field.classList.add('is-valid');
+            } else {
+                validation.className = 'rule-icon invalid';
+                validation.innerHTML = '<i class="fas fa-times"></i>';
+                if (value.length > 0) {
+                    field.classList.add('is-invalid');
+                    field.classList.remove('is-valid');
+                }
+            }
+        }
+        
+        function validateHeight() {
+            const field = document.getElementById('height');
+            const validation = document.getElementById('heightValidation');
+            const value = parseInt(field.value);
+            
+            if (value >= 100 && value <= 300) {
+                validation.className = 'rule-icon valid';
+                validation.innerHTML = '<i class="fas fa-check"></i>';
+                field.classList.remove('is-invalid');
+                field.classList.add('is-valid');
+            } else {
+                validation.className = 'rule-icon invalid';
+                validation.innerHTML = '<i class="fas fa-times"></i>';
+                if (field.value) {
+                    field.classList.add('is-invalid');
+                    field.classList.remove('is-valid');
+                }
+            }
+        }
+        
+        function updatePreview() {
+            const name = document.getElementById('name').value || '-';
+            const regnumber = document.getElementById('regnumber').value || '-';
+            const height = document.getElementById('height').value ? document.getElementById('height').value + ' cm' : '-';
+            
+            document.getElementById('previewName').textContent = name;
+            document.getElementById('previewRegnumber').textContent = regnumber;
+            document.getElementById('previewHeight').textContent = height;
+            
+            const previewCard = document.getElementById('previewCard');
+            if (name !== '-' || regnumber !== '-' || height !== '- cm') {
+                previewCard.style.display = 'block';
+            } else {
+                previewCard.style.display = 'none';
+            }
+        }
+        
+        function fillSampleData(sample) {
+            const samples = {
+                1: { name: 'Emma Johnson', regnumber: 'EJ2025', height: 165 },
+                2: { name: 'Michael Brown', regnumber: 'MB7890', height: 180 },
+                3: { name: 'Sarah Wilson', regnumber: 'SW4567', height: 172 }
+            };
+            
+            const data = samples[sample];
+            if (data) {
+                document.getElementById('name').value = data.name;
+                document.getElementById('regnumber').value = data.regnumber;
+                document.getElementById('height').value = data.height;
+                
+                // Trigger validation
+                validateName();
+                validateRegnumber();
+                validateHeight();
+                updatePreview();
+            }
+        }
+        
+        // Form submission enhancement
+        const form = document.getElementById('personForm');
+        form.addEventListener('submit', function(e) {
+            const submitButton = form.querySelector('button[type="submit"]');
+            submitButton.innerHTML = '<i class="spinner"></i> Processing...';
+            submitButton.disabled = true;
+        });
+        
+        // Auto-uppercase registration number
+        document.getElementById('regnumber').addEventListener('input', function() {
+            this.value = this.value.toUpperCase();
+        });
+    </script>
+    
+    <style>
+        .validation-rule {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .rule-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 0.5rem;
+            font-size: 0.75rem;
+        }
+        
+        .rule-icon.valid {
+            background-color: #2ecc71;
+            color: white;
+        }
+        
+        .rule-icon.invalid {
+            background-color: #e74c3c;
+            color: white;
+        }
+        
+        .form-help {
+            margin-top: 0.25rem;
+        }
+        
+        .sample-card {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+        
+        .sample-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border-color: var(--secondary-color);
+        }
+        
+        .preview-content {
+            padding: 1rem 0;
+        }
+        
+        .preview-field {
+            margin-bottom: 0.5rem;
+            padding: 0.5rem;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+        
+        .is-valid {
+            border-color: #2ecc71 !important;
+            box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.1) !important;
+        }
+        
+        .is-invalid {
+            border-color: #e74c3c !important;
+            box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1) !important;
+        }
+        
+        @media (max-width: 768px) {
+            .sample-card {
+                margin-bottom: 1rem;
+            }
+        }
+    </style>
+</th:block>
+
+</html>

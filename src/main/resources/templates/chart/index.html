@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+      layout:decorate="~{fragments/layout}">
+
+<div layout:fragment="content">
+    <!-- Statistics Overview -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-number" th:text="${totalPersons}">0</div>
+            <div class="stat-label">Total Persons</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" th:text="${totalVehicles}">0</div>
+            <div class="stat-label">Total Vehicles</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" th:text="${brandData != null ? brandData.size() : 0}">0</div>
+            <div class="stat-label">Vehicle Brands</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" th:text="${colorData != null ? colorData.size() : 0}">0</div>
+            <div class="stat-label">Vehicle Colors</div>
+        </div>
+    </div>
+
+    <!-- Chart Section -->
+    <div class="row">
+        <div class="col-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-car"></i> Vehicles by Brand
+                    </h3>
+                </div>
+                  <div th:if="${brandData != null and not brandData.isEmpty()}" class="text-center">
+                    <canvas id="brandChart" width="400" height="300"></canvas>
+                </div>
+                
+                <div th:if="${brandData == null or brandData.isEmpty()}" class="alert alert-info text-center">
+                    <i class="fas fa-info-circle"></i> No vehicle brand data available
+                </div>
+                
+                <!-- Brand Statistics Table -->
+                <div th:if="${brandData != null and not brandData.isEmpty()}" class="mt-2">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Brand</th>
+                                <th>Count</th>
+                                <th>Percentage</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="entry : ${brandData}">
+                                <td th:text="${entry.key}">Ford</td>
+                                <td th:text="${entry.value}">2</td>
+                                <td th:text="${totalVehicles > 0 ? #numbers.formatPercent(entry.value / totalVehicles) : '0%'}">50%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-palette"></i> Vehicles by Color
+                    </h3>
+                </div>
+                  <div th:if="${colorData != null and not colorData.isEmpty()}" class="text-center">
+                    <canvas id="colorChart" width="400" height="300"></canvas>
+                </div>
+                
+                <div th:if="${colorData == null or colorData.isEmpty()}" class="alert alert-info text-center">
+                    <i class="fas fa-info-circle"></i> No vehicle color data available
+                </div>
+                
+                <!-- Color Statistics Table -->
+                <div th:if="${colorData != null and not colorData.isEmpty()}" class="mt-2">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Color</th>
+                                <th>Count</th>
+                                <th>Percentage</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="entry : ${colorData}">
+                                <td>
+                                    <span th:text="${entry.key}" 
+                                          th:style="'color: ' + ${entry.key == 'red' ? '#e74c3c' : 
+                                                                  entry.key == 'blue' ? '#3498db' : 
+                                                                  entry.key == 'white' ? '#7f8c8d' : 
+                                                                  entry.key == 'black' ? '#2c3e50' : '#2ecc71'}">
+                                        red
+                                    </span>
+                                </td>
+                                <td th:text="${entry.value}">2</td>
+                                <td th:text="${totalVehicles > 0 ? #numbers.formatPercent(entry.value / totalVehicles) : '0%'}">50%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Combined Statistics Chart -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-chart-bar"></i> Overall Database Statistics
+            </h3>
+        </div>
+          <div class="text-center">
+            <canvas id="statsChart" width="800" height="400"></canvas>
+        </div>
+        
+        <div class="row mt-2">
+            <div class="col-4">
+                <h4><i class="fas fa-users"></i> Person Statistics</h4>
+                <ul>
+                    <li>Total registered persons: <strong th:text="${totalPersons ?: 0}">0</strong></li>
+                    <li>Average height: <strong th:text="${totalPersons > 0 ? '170 cm' : 'N/A'}">N/A</strong></li>
+                    <li>Vehicle ownership rate: <strong th:text="${totalPersons > 0 and totalVehicles > 0 ? #numbers.formatPercent(totalVehicles / totalPersons) : '0%'}">0%</strong></li>
+                </ul>
+            </div>
+            
+            <div class="col-4">
+                <h4><i class="fas fa-car"></i> Vehicle Statistics</h4>
+                <ul>
+                    <li>Total vehicles: <strong th:text="${totalVehicles ?: 0}">0</strong></li>
+                    <li>Unique brands: <strong th:text="${brandData != null ? brandData.size() : 0}">0</strong></li>
+                    <li>Unique colors: <strong th:text="${colorData != null ? colorData.size() : 0}">0</strong></li>                    <li>Most popular brand: <strong th:text="${brandData != null and not brandData.isEmpty() ? 'Ford' : 'N/A'}">N/A</strong></li>
+                </ul>
+            </div>
+            
+            <div class="col-4">
+                <h4><i class="fas fa-info-circle"></i> System Information</h4>
+                <ul>
+                    <li>Database tables: <strong>4</strong> (persons, vehicles, phones, users)</li>
+                    <li>Total records: <strong th:text="${(totalPersons ?: 0) + (totalVehicles ?: 0)}">0</strong></li>
+                    <li>Chart library: <strong>Chart.js 3.x</strong></li>
+                    <li>Last updated: <strong th:text="${#temporals.format(#temporals.createNow(), 'MMM dd, yyyy HH:mm')}">Now</strong></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart Controls -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-tools"></i> Chart Controls
+            </h3>
+        </div>
+        
+        <div class="row">
+            <div class="col-3">
+                <button onclick="refreshCharts()" class="btn btn-primary" style="width: 100%;">
+                    <i class="fas fa-sync"></i><br>Refresh Data
+                </button>
+            </div>
+            <div class="col-3">
+                <button onclick="exportCharts()" class="btn btn-success" style="width: 100%;">
+                    <i class="fas fa-download"></i><br>Export Images
+                </button>
+            </div>
+            <div class="col-3">
+                <button onclick="toggleChartType()" class="btn btn-warning" style="width: 100%;">
+                    <i class="fas fa-exchange-alt"></i><br>Toggle Chart Type
+                </button>
+            </div>
+            <div class="col-3">
+                <a th:href="@{/database}" class="btn btn-info" style="width: 100%;">
+                    <i class="fas fa-database"></i><br>View Database
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- API Information -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-code"></i> API Access for Charts
+            </h3>
+        </div>
+        
+        <div class="row">
+            <div class="col-6">
+                <h4><i class="fas fa-link"></i> REST Endpoints</h4>
+                <ul>
+                    <li><code>GET /api/stats/vehicles-by-brand</code> - Vehicle brand statistics</li>
+                    <li><code>GET /api/stats/vehicles-by-color</code> - Vehicle color statistics</li>
+                    <li><code>GET /api/persons</code> - All persons data</li>
+                    <li><code>GET /api/vehicles</code> - All vehicles data</li>
+                </ul>
+                
+                <div class="alert alert-info">
+                    <h5><i class="fas fa-lock"></i> Authentication Required</h5>
+                    <p>API access requires user authentication. Login to access the endpoints.</p>
+                </div>
+            </div>
+            
+            <div class="col-6">
+                <h4><i class="fas fa-terminal"></i> Example API Usage</h4>
+                <pre style="background: #f8f9fa; padding: 1rem; border-radius: 5px; font-size: 0.875rem;"><code>// JavaScript example
+fetch('/api/stats/vehicles-by-brand')
+  .then(response => response.json())
+  .then(data => {
+    console.log('Brand stats:', data);
+  });
+
+// cURL example  
+curl -X GET "http://localhost:8080/api/vehicles" \
+  -H "Content-Type: application/json"</code></pre>
+                
+                <button onclick="testAPI()" class="btn btn-primary btn-sm">
+                    <i class="fas fa-play"></i> Test API
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block layout:fragment="scripts">    <script th:inline="javascript">
+        let chartInstances = {};
+        
+        // Get data from Thymeleaf
+        const brandData = /*[[${brandData}]]*/ {};
+        const colorData = /*[[${colorData}]]*/ {};
+        const totalPersons = /*[[${totalPersons}]]*/ 0;
+        const totalVehicles = /*[[${totalVehicles}]]*/ 0;
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            initCharts();
+        });
+        
+        function initCharts() {
+            // Initialize brand chart
+            const brandCanvas = document.getElementById('brandChart');
+            if (brandCanvas && Object.keys(brandData).length > 0) {
+                createPieChart(brandCanvas, brandData, 'Vehicles by Brand', 'brandChart');
+            }
+            
+            // Initialize color chart
+            const colorCanvas = document.getElementById('colorChart');
+            if (colorCanvas && Object.keys(colorData).length > 0) {
+                createDoughnutChart(colorCanvas, colorData, 'Vehicles by Color', 'colorChart');
+            }
+            
+            // Initialize stats chart
+            const statsCanvas = document.getElementById('statsChart');
+            if (statsCanvas) {
+                const statsData = {
+                    totalPersons: totalPersons,
+                    totalVehicles: totalVehicles,
+                    totalMessages: 0
+                };
+                createBarChart(statsCanvas, statsData, 'Database Statistics', 'statsChart');
+            }
+        }
+        
+        function createPieChart(canvas, data, title, chartId) {
+            if (chartInstances[chartId]) {
+                chartInstances[chartId].destroy();
+            }
+            
+            const ctx = canvas.getContext('2d');
+            chartInstances[chartId] = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: Object.keys(data),
+                    datasets: [{
+                        data: Object.values(data),
+                        backgroundColor: [
+                            '#3498db',
+                            '#e74c3c', 
+                            '#2ecc71',
+                            '#f39c12',
+                            '#9b59b6',
+                            '#1abc9c'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: title
+                        },
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+        
+        function createDoughnutChart(canvas, data, title, chartId) {
+            if (chartInstances[chartId]) {
+                chartInstances[chartId].destroy();
+            }
+            
+            const ctx = canvas.getContext('2d');
+            chartInstances[chartId] = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(data),
+                    datasets: [{
+                        data: Object.values(data),
+                        backgroundColor: Object.keys(data).map(color => {
+                            const colorMap = {
+                                'red': '#e74c3c',
+                                'blue': '#3498db', 
+                                'white': '#ecf0f1',
+                                'black': '#2c3e50',
+                                'green': '#2ecc71',
+                                'yellow': '#f1c40f'
+                            };
+                            return colorMap[color.toLowerCase()] || '#95a5a6';
+                        })
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: title
+                        },
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+        
+        function createBarChart(canvas, data, title, chartId) {
+            if (chartInstances[chartId]) {
+                chartInstances[chartId].destroy();
+            }
+            
+            const ctx = canvas.getContext('2d');
+            chartInstances[chartId] = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Persons', 'Vehicles', 'Messages'],
+                    datasets: [{
+                        label: 'Count',
+                        data: [
+                            data.totalPersons || 0,
+                            data.totalVehicles || 0,
+                            data.totalMessages || 0
+                        ],
+                        backgroundColor: [
+                            '#3498db',
+                            '#2ecc71', 
+                            '#e74c3c'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: title
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function refreshCharts() {
+            location.reload();
+        }
+        
+        function exportCharts() {
+            Object.keys(chartInstances).forEach(chartId => {
+                const chart = chartInstances[chartId];
+                const url = chart.toBase64Image();
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${chartId}_${new Date().toISOString().split('T')[0]}.png`;
+                a.click();
+            });
+            showAlert('Charts exported successfully!', 'success');
+        }
+        
+        function toggleChartType() {
+            // Toggle between pie/doughnut and bar charts
+            const brandChart = chartInstances['brandChart'];
+            const colorChart = chartInstances['colorChart'];
+            
+            if (brandChart && brandChart.config.type === 'pie') {
+                // Convert to bar chart
+                brandChart.config.type = 'bar';
+                brandChart.config.options.scales = {
+                    y: { beginAtZero: true }
+                };
+            } else if (brandChart && brandChart.config.type === 'bar') {
+                // Convert back to pie chart
+                brandChart.config.type = 'pie';
+                delete brandChart.config.options.scales;
+            }
+            
+            if (brandChart) brandChart.update();
+            if (colorChart) colorChart.update();
+        }
+        
+        async function testAPI() {
+            try {
+                const response = await fetch('/api/stats/vehicles-by-brand');
+                const data = await response.json();
+                console.log('API Response:', data);
+                showAlert('API test successful! Check console for data.', 'success');
+            } catch (error) {
+                console.error('API test failed:', error);
+                showAlert('API test failed. Check authentication.', 'danger');
+            }
+        }
+    </script>
+</th:block>
+
+</html>

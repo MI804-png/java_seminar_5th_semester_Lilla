@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle != null ? pageTitle + ' - Vehicle Registration System' : 'Vehicle Registration System'}">Vehicle Registration System</title>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    
+    <!-- Chart.js for statistics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="navbar">
+            <a th:href="@{/}" class="logo">
+                <i class="fas fa-car"></i> Vehicle Registration
+            </a>
+            
+            <ul class="nav-menu">
+                <li><a th:href="@{/}"><i class="fas fa-home"></i> Home</a></li>
+                <li><a th:href="@{/database}"><i class="fas fa-database"></i> Database</a></li>
+                <li><a th:href="@{/contact}"><i class="fas fa-envelope"></i> Contact</a></li>
+                <li sec:authorize="hasRole('REGISTERED') or hasRole('ADMIN')">
+                    <a th:href="@{/messages}"><i class="fas fa-comments"></i> Messages</a>
+                </li>
+                <li><a th:href="@{/chart}"><i class="fas fa-chart-bar"></i> Charts</a></li>
+                <li><a th:href="@{/crud}"><i class="fas fa-edit"></i> CRUD</a></li>
+                <li sec:authorize="hasRole('ADMIN')">
+                    <a th:href="@{/admin}"><i class="fas fa-cog"></i> Admin</a>
+                </li>
+                
+                <li sec:authorize="isAnonymous()">
+                    <a th:href="@{/login}"><i class="fas fa-sign-in-alt"></i> Login</a>
+                </li>
+                <li sec:authorize="isAnonymous()">
+                    <a th:href="@{/register}"><i class="fas fa-user-plus"></i> Register</a>
+                </li>
+                <li sec:authorize="isAuthenticated()">
+                    <span>Welcome, <span sec:authentication="name">User</span></span>
+                </li>
+                <li sec:authorize="isAuthenticated()">
+                    <a th:href="@{/logout}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </li>
+            </ul>
+            
+            <div class="nav-toggle">
+                <span class="hamburger"></span>
+                <span class="hamburger"></span>
+                <span class="hamburger"></span>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Page Header -->
+            <div class="page-header" th:if="${pageTitle}">
+                <h1 class="page-title" th:text="${pageTitle}">Page Title</h1>
+            </div>
+
+            <!-- Alert Messages -->
+            <div th:if="${success}" class="alert alert-success">
+                <i class="fas fa-check-circle"></i> <span th:text="${success}">Success message</span>
+            </div>
+            
+            <div th:if="${error}" class="alert alert-danger">
+                <i class="fas fa-exclamation-circle"></i> <span th:text="${error}">Error message</span>
+            </div>
+            
+            <div th:if="${param.logout}" class="alert alert-info">
+                <i class="fas fa-info-circle"></i> You have been successfully logged out.
+            </div>
+            
+            <div th:if="${param.error}" class="alert alert-danger">
+                <i class="fas fa-exclamation-triangle"></i> Invalid username or password.
+            </div>
+
+            <!-- Page Content -->
+            <div layout:fragment="content">
+                <!-- Page-specific content goes here -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Vehicle Registration System. Created by Mikhael Nabil Salama Rezk & Szabo Lilla.</p>
+            <p>Built with Spring Boot, Thymeleaf, and modern web technologies.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script th:src="@{/js/main.js}"></script>
+    
+    <!-- Page-specific JavaScript -->
+    <th:block layout:fragment="scripts">
+        <!-- Page-specific scripts go here -->
+    </th:block>
+</body>
+</html>

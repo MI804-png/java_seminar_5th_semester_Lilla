@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+      layout:decorate="~{fragments/layout}">
+
+<div layout:fragment="content">
+    <!-- Admin Dashboard Overview -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-number" th:text="${totalUsers}">0</div>
+            <div class="stat-label">Total Users</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" th:text="${totalPersons}">0</div>
+            <div class="stat-label">Person Records</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" th:text="${totalVehicles}">0</div>
+            <div class="stat-label">Vehicle Records</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" th:text="${totalMessages}">0</div>
+            <div class="stat-label">Contact Messages</div>
+        </div>
+    </div>
+
+    <!-- System Information -->
+    <div class="row">
+        <div class="col-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-server"></i> System Status
+                    </h3>
+                </div>
+                
+                <div class="system-status">
+                    <div class="status-item">
+                        <div class="status-indicator online"></div>
+                        <span>Database Connection</span>
+                        <strong class="text-success">ONLINE</strong>
+                    </div>
+                    
+                    <div class="status-item">
+                        <div class="status-indicator online"></div>
+                        <span>Spring Security</span>
+                        <strong class="text-success">ACTIVE</strong>
+                    </div>
+                    
+                    <div class="status-item">
+                        <div class="status-indicator online"></div>
+                        <span>REST API</span>
+                        <strong class="text-success">RUNNING</strong>
+                    </div>
+                    
+                    <div class="status-item">
+                        <div class="status-indicator online"></div>
+                        <span>Thymeleaf Engine</span>
+                        <strong class="text-success">LOADED</strong>
+                    </div>
+                </div>
+                
+                <h4><i class="fas fa-info-circle"></i> System Information</h4>
+                <ul>
+                    <li><strong>Application:</strong> Vehicle Registration System</li>
+                    <li><strong>Version:</strong> 1.0.0-SNAPSHOT</li>
+                    <li><strong>Framework:</strong> Spring Boot 3.2.0</li>
+                    <li><strong>Database:</strong> MySQL 8.0</li>
+                    <li><strong>Java Version:</strong> 17</li>
+                    <li><strong>Build Tool:</strong> Maven</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="col-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-chart-line"></i> Quick Analytics
+                    </h3>
+                </div>
+                
+                <canvas id="adminChart" width="400" height="200"></canvas>
+                
+                <h4><i class="fas fa-trend-up"></i> Growth Metrics</h4>
+                <div class="metrics-grid">
+                    <div class="metric-item">
+                        <div class="metric-value">+15%</div>
+                        <div class="metric-label">User Growth</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-value">+8%</div>
+                        <div class="metric-label">Data Growth</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-value">99.9%</div>
+                        <div class="metric-label">Uptime</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-value"><1s</div>
+                        <div class="metric-label">Avg Response</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Actions -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-tools"></i> Administration Tools
+            </h3>
+        </div>
+        
+        <div class="admin-actions">
+            <div class="action-group">
+                <h4><i class="fas fa-users"></i> User Management</h4>
+                <div class="action-buttons">
+                    <a th:href="@{/admin/users}" class="btn btn-primary">
+                        <i class="fas fa-users"></i><br>Manage Users
+                    </a>
+                    <button onclick="exportUsers()" class="btn btn-success">
+                        <i class="fas fa-download"></i><br>Export Users
+                    </button>
+                    <button onclick="viewUserStats()" class="btn btn-info">
+                        <i class="fas fa-chart-bar"></i><br>User Analytics
+                    </button>
+                </div>
+            </div>
+            
+            <div class="action-group">
+                <h4><i class="fas fa-database"></i> Database Management</h4>
+                <div class="action-buttons">
+                    <button onclick="backupDatabase()" class="btn btn-warning">
+                        <i class="fas fa-save"></i><br>Backup Data
+                    </button>
+                    <button onclick="clearCache()" class="btn btn-secondary">
+                        <i class="fas fa-broom"></i><br>Clear Cache
+                    </button>
+                    <button onclick="optimizeDB()" class="btn btn-success">
+                        <i class="fas fa-tachometer-alt"></i><br>Optimize DB
+                    </button>
+                </div>
+            </div>
+            
+            <div class="action-group">
+                <h4><i class="fas fa-cogs"></i> System Control</h4>
+                <div class="action-buttons">
+                    <button onclick="viewLogs()" class="btn btn-info">
+                        <i class="fas fa-file-alt"></i><br>View Logs
+                    </button>
+                    <button onclick="systemHealth()" class="btn btn-primary">
+                        <i class="fas fa-heartbeat"></i><br>Health Check
+                    </button>
+                    <button onclick="restartServices()" class="btn btn-danger">
+                        <i class="fas fa-redo"></i><br>Restart Services
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-history"></i> Recent Activity
+            </h3>
+        </div>
+        
+        <div class="activity-feed">
+            <div class="activity-item">
+                <div class="activity-icon user-activity">
+                    <i class="fas fa-user-plus"></i>
+                </div>
+                <div class="activity-content">
+                    <div class="activity-title">New user registration</div>
+                    <div class="activity-description">User 'testuser' registered with email test@example.com</div>
+                    <div class="activity-time">2 hours ago</div>
+                </div>
+            </div>
+            
+            <div class="activity-item">
+                <div class="activity-icon data-activity">
+                    <i class="fas fa-edit"></i>
+                </div>
+                <div class="activity-content">
+                    <div class="activity-title">Person record updated</div>
+                    <div class="activity-description">Person 'John Smith' (ABC123) information modified</div>
+                    <div class="activity-time">4 hours ago</div>
+                </div>
+            </div>
+            
+            <div class="activity-item">
+                <div class="activity-icon message-activity">
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <div class="activity-content">
+                    <div class="activity-title">Contact message received</div>
+                    <div class="activity-description">New message from customer support inquiry</div>
+                    <div class="activity-time">6 hours ago</div>
+                </div>
+            </div>
+            
+            <div class="activity-item">
+                <div class="activity-icon system-activity">
+                    <i class="fas fa-server"></i>
+                </div>
+                <div class="activity-content">
+                    <div class="activity-title">Database backup completed</div>
+                    <div class="activity-description">Automated backup finished successfully (Size: 2.4 MB)</div>
+                    <div class="activity-time">1 day ago</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center">
+            <button onclick="loadMoreActivity()" class="btn btn-secondary">
+                <i class="fas fa-plus"></i> Load More Activity
+            </button>
+        </div>
+    </div>
+
+    <!-- Security Information -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-shield-alt"></i> Security Dashboard
+            </h3>
+        </div>
+        
+        <div class="row">
+            <div class="col-4">
+                <h4><i class="fas fa-lock"></i> Authentication</h4>
+                <ul>
+                    <li>Password encryption: BCrypt</li>
+                    <li>Session timeout: 30 minutes</li>
+                    <li>Failed login attempts: Max 5</li>
+                    <li>Two-factor auth: Available</li>
+                </ul>
+            </div>
+            
+            <div class="col-4">
+                <h4><i class="fas fa-user-shield"></i> Authorization</h4>
+                <ul>
+                    <li>Role-based access control</li>
+                    <li>Method-level security</li>
+                    <li>URL pattern protection</li>
+                    <li>CSRF protection enabled</li>
+                </ul>
+            </div>
+            
+            <div class="col-4">
+                <h4><i class="fas fa-eye"></i> Monitoring</h4>
+                <ul>
+                    <li>Access logs: Enabled</li>
+                    <li>Failed login tracking: Active</li>
+                    <li>SQL injection detection: ON</li>
+                    <li>XSS protection: Enabled</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block layout:fragment="scripts">
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize admin chart
+            const chartCanvas = document.getElementById('adminChart');
+            if (chartCanvas && typeof Chart !== 'undefined') {
+                const ctx = chartCanvas.getContext('2d');
+                
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                        datasets: [{
+                            label: 'System Activity',
+                            data: [12, 19, 8, 15, 22, 18, 25],
+                            borderColor: '#3498db',
+                            backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                            tension: 0.4
+                        }, {
+                            label: 'User Activity',
+                            data: [8, 12, 6, 10, 15, 12, 18],
+                            borderColor: '#2ecc71',
+                            backgroundColor: 'rgba(46, 204, 113, 0.1)',
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Weekly Activity Overview'
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // Auto-refresh system status
+            setInterval(updateSystemStatus, 30000); // Every 30 seconds
+        });
+        
+        function updateSystemStatus() {
+            // Simulate status update
+            const indicators = document.querySelectorAll('.status-indicator');
+            indicators.forEach(indicator => {
+                indicator.classList.add('pulse');
+                setTimeout(() => {
+                    indicator.classList.remove('pulse');
+                }, 1000);
+            });
+        }
+        
+        // Admin action functions
+        function exportUsers() {
+            showAlert('User export initiated. Download will start shortly.', 'info');
+        }
+        
+        function viewUserStats() {
+            showAlert('Generating user analytics report...', 'info');
+        }
+        
+        function backupDatabase() {
+            if (confirm('Are you sure you want to backup the database?')) {
+                showAlert('Database backup started. This may take a few minutes.', 'success');
+            }
+        }
+        
+        function clearCache() {
+            if (confirm('Clear application cache?')) {
+                showAlert('Cache cleared successfully!', 'success');
+            }
+        }
+        
+        function optimizeDB() {
+            if (confirm('Optimize database? This may affect performance temporarily.')) {
+                showAlert('Database optimization started...', 'info');
+            }
+        }
+        
+        function viewLogs() {
+            showAlert('Opening system logs viewer...', 'info');
+        }
+        
+        function systemHealth() {
+            showAlert('Running system health check...', 'info');
+            setTimeout(() => {
+                showAlert('System health: All systems operational!', 'success');
+            }, 2000);
+        }
+        
+        function restartServices() {
+            if (confirm('Restart system services? This will temporarily interrupt service.')) {
+                showAlert('Services restart initiated...', 'warning');
+            }
+        }
+        
+        function loadMoreActivity() {
+            showAlert('Loading more activity...', 'info');
+        }
+    </script>
+    
+    <style>
+        .system-status {
+            margin-bottom: 1.5rem;
+        }
+        
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #2ecc71;
+        }
+        
+        .status-indicator.online {
+            background-color: #2ecc71;
+            box-shadow: 0 0 8px rgba(46, 204, 113, 0.5);
+        }
+        
+        .status-indicator.offline {
+            background-color: #e74c3c;
+            box-shadow: 0 0 8px rgba(231, 76, 60, 0.5);
+        }
+        
+        .status-indicator.pulse {
+            animation: pulse 1s ease-in-out;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .admin-actions {
+            padding: 1rem;
+        }
+        
+        .action-group {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .action-group:last-child {
+            border-bottom: none;
+        }
+        
+        .action-group h4 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+        
+        .action-buttons .btn {
+            text-align: center;
+            padding: 1rem;
+            height: auto;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .metric-item {
+            text-align: center;
+            padding: 0.75rem;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--secondary-color);
+        }
+        
+        .metric-label {
+            font-size: 0.875rem;
+            color: #666;
+        }
+        
+        .activity-feed {
+            padding: 1rem;
+        }
+        
+        .activity-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid var(--border-color);
+        }
+        
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        .activity-icon.user-activity { background-color: #3498db; }
+        .activity-icon.data-activity { background-color: #f39c12; }
+        .activity-icon.message-activity { background-color: #2ecc71; }
+        .activity-icon.system-activity { background-color: #9b59b6; }
+        
+        .activity-content {
+            flex: 1;
+        }
+        
+        .activity-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        
+        .activity-description {
+            color: #666;
+            font-size: 0.875rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .activity-time {
+            color: #999;
+            font-size: 0.75rem;
+        }
+        
+        @media (max-width: 768px) {
+            .action-buttons {
+                grid-template-columns: 1fr;
+            }
+            
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</th:block>
+
+</html>

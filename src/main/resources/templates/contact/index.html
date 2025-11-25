@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+      layout:decorate="~{fragments/layout}">
+
+<div layout:fragment="content">
+    <div class="row">
+        <div class="col-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-envelope"></i> Send Us a Message
+                    </h3>
+                </div>
+                
+                <form th:action="@{/contact}" th:object="${contactMessage}" method="post">
+                    <div class="form-group">
+                        <label for="name" class="form-label">
+                            <i class="fas fa-user"></i> Name *
+                        </label>
+                        <input type="text" id="name" th:field="*{name}" class="form-control" 
+                               placeholder="Enter your full name" required>
+                        <div class="form-error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email" class="form-label">
+                            <i class="fas fa-envelope"></i> Email Address *
+                        </label>
+                        <input type="email" id="email" th:field="*{email}" class="form-control" 
+                               placeholder="Enter your email address" required>
+                        <div class="form-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="subject" class="form-label">
+                            <i class="fas fa-tag"></i> Subject *
+                        </label>
+                        <input type="text" id="subject" th:field="*{subject}" class="form-control" 
+                               placeholder="Enter the subject of your message" required>
+                        <div class="form-error" th:if="${#fields.hasErrors('subject')}" th:errors="*{subject}"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="message" class="form-label">
+                            <i class="fas fa-comment"></i> Message *
+                        </label>
+                        <textarea id="message" th:field="*{message}" class="form-control" rows="6"
+                                placeholder="Enter your message here..." required></textarea>
+                        <div class="form-error" th:if="${#fields.hasErrors('message')}" th:errors="*{message}"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-paper-plane"></i> Send Message
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="col-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-info-circle"></i> Contact Information
+                    </h3>
+                </div>
+                
+                <h4><i class="fas fa-building"></i> About Our Company</h4>
+                <p>Vehicle Registration Solutions is your trusted partner for comprehensive vehicle registration management. 
+                   We provide state-of-the-art technology solutions for tracking vehicles, owners, and related information.</p>
+                
+                <h4><i class="fas fa-map-marker-alt"></i> Our Location</h4>
+                <address>
+                    <strong>Vehicle Registration Solutions</strong><br>
+                    John von Neumann University<br>
+                    Kecskemét, Hungary<br>
+                    <i class="fas fa-phone"></i> Phone: +36 76 516 300<br>
+                    <i class="fas fa-envelope"></i> Email: info@vehiclereg.hu
+                </address>
+                
+                <h4><i class="fas fa-clock"></i> Business Hours</h4>
+                <ul>
+                    <li>Monday - Friday: 8:00 AM - 6:00 PM</li>
+                    <li>Saturday: 9:00 AM - 1:00 PM</li>
+                    <li>Sunday: Closed</li>
+                </ul>
+                
+                <h4><i class="fas fa-headset"></i> Support Services</h4>
+                <ul>
+                    <li><strong>Technical Support:</strong> For system issues and troubleshooting</li>
+                    <li><strong>Data Management:</strong> Help with vehicle and person registration</li>
+                    <li><strong>API Support:</strong> Integration assistance for developers</li>
+                    <li><strong>Training:</strong> User training and documentation</li>
+                </ul>
+                
+                <div class="alert alert-info">
+                    <h5><i class="fas fa-shield-alt"></i> Privacy Notice</h5>
+                    <p>All messages sent through this contact form are stored securely and will be reviewed by our support team. 
+                       We respect your privacy and will only use your information to respond to your inquiry.</p>
+                </div>
+                
+                <h4><i class="fas fa-users"></i> Development Team</h4>
+                <ul>
+                    <li><strong>Mikhael Nabil Salama Rezk</strong> - Lead Developer (IHUTSC)</li>
+                    <li><strong>Szabo Lilla</strong> - Co-Developer</li>
+                </ul>
+                
+                <div class="text-center mt-2">
+                    <p><em>Built with Spring Boot, MySQL, and modern web technologies</em></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Features Section -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-cogs"></i> System Features & Capabilities
+            </h3>
+        </div>
+        
+        <div class="row">
+            <div class="col-4">
+                <h4><i class="fas fa-database"></i> Data Management</h4>
+                <ul>
+                    <li>Person registration and management</li>
+                    <li>Vehicle tracking and ownership</li>
+                    <li>Phone number association</li>
+                    <li>Comprehensive search capabilities</li>
+                </ul>
+            </div>
+            
+            <div class="col-4">
+                <h4><i class="fas fa-shield-alt"></i> Security Features</h4>
+                <ul>
+                    <li>Role-based access control</li>
+                    <li>Encrypted password storage</li>
+                    <li>Session management</li>
+                    <li>CSRF protection</li>
+                </ul>
+            </div>
+            
+            <div class="col-4">
+                <h4><i class="fas fa-chart-line"></i> Analytics & Reporting</h4>
+                <ul>
+                    <li>Interactive charts and graphs</li>
+                    <li>Vehicle distribution analysis</li>
+                    <li>Statistical reporting</li>
+                    <li>Export capabilities</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block layout:fragment="scripts">
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Form enhancement
+            const form = document.querySelector('form');
+            const submitButton = form.querySelector('button[type="submit"]');
+            
+            // Character count for message field
+            const messageField = document.getElementById('message');
+            const maxLength = 1000;
+            
+            // Create character counter
+            const charCounter = document.createElement('div');
+            charCounter.style.textAlign = 'right';
+            charCounter.style.fontSize = '0.875rem';
+            charCounter.style.color = '#666';
+            charCounter.style.marginTop = '0.25rem';
+            
+            messageField.parentNode.appendChild(charCounter);
+            
+            function updateCharCount() {
+                const remaining = maxLength - messageField.value.length;
+                charCounter.textContent = `${messageField.value.length}/${maxLength} characters`;
+                
+                if (remaining < 100) {
+                    charCounter.style.color = '#e74c3c';
+                } else if (remaining < 200) {
+                    charCounter.style.color = '#f39c12';
+                } else {
+                    charCounter.style.color = '#666';
+                }
+            }
+            
+            messageField.addEventListener('input', updateCharCount);
+            updateCharCount();
+            
+            // Form validation enhancement
+            form.addEventListener('submit', function(e) {
+                submitButton.innerHTML = '<i class="spinner"></i> Sending...';
+                submitButton.disabled = true;
+            });
+            
+            // Email validation
+            const emailField = document.getElementById('email');
+            emailField.addEventListener('blur', function() {
+                const email = this.value;
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                
+                if (email && !emailRegex.test(email)) {
+                    this.classList.add('is-invalid');
+                } else {
+                    this.classList.remove('is-invalid');
+                }
+            });
+        });
+    </script>
+</th:block>
+
+</html>
