@@ -1,5 +1,6 @@
 package com.vehiclereg.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 
@@ -19,6 +20,7 @@ public class Vehicle {
     @Column(length = 20, nullable = false)
     private String color;
     
+    @JsonIgnore
     @OneToOne(mappedBy = "vehicle")
     private Person owner;
     

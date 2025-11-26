@@ -1,5 +1,6 @@
 package com.vehiclereg.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -30,6 +31,7 @@ public class Person {
     @OneToMany(mappedBy = "person", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Phone> phones;
     
+    @JsonIgnore
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "regnumber", referencedColumnName = "regnum", insertable = false, updatable = false)
     private Vehicle vehicle;

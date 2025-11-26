@@ -42,7 +42,8 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.authorizeRequests(authz -> authz
+        http
+            .authorizeRequests(authz -> authz
                 .antMatchers("/", "/home", "/database", "/chart", "/css/**", "/js/**", "/images/**").permitAll()
                 .antMatchers("/register", "/register/**").permitAll()
                 .antMatchers("/contact", "/contact/**").permitAll()
@@ -52,6 +53,8 @@ public class SecurityConfig {
                 .antMatchers("/api/**").hasAnyRole("REGISTERED", "ADMIN")
                 .anyRequest().authenticated()
             )
+            .httpBasic()
+            .and()
             .formLogin(form -> form
                 .loginPage("/login")
                 .loginProcessingUrl("/login")
@@ -68,9 +71,9 @@ public class SecurityConfig {
             )
             .csrf(csrf -> csrf
                 .ignoringAntMatchers("/api/**")
-            );
+            )
+            .authenticationProvider(authenticationProvider());
 
-        http.authenticationProvider(authenticationProvider());
         return http.build();
     }
 }

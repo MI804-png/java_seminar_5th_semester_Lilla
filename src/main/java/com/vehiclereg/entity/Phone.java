@@ -1,5 +1,6 @@
 package com.vehiclereg.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -20,6 +21,7 @@ public class Phone {
     @Column(length = 20, nullable = false)
     private String number;
     
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "personid", insertable = false, updatable = false)
     private Person person;
