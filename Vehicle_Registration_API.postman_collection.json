@@ -1,0 +1,147 @@
+{
+  "info": {
+    "name": "Vehicle Registration API",
+    "description": "REST API endpoints for Vehicle Registration Application",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "basic",
+    "basic": [
+      {
+        "key": "username",
+        "value": "admin",
+        "type": "string"
+      },
+      {
+        "key": "password",
+        "value": "admin123",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "Get All Persons",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/persons",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "persons"]
+        },
+        "description": "Retrieve all persons with their phone numbers"
+      }
+    },
+    {
+      "name": "Get Person by ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/persons/1",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "persons", "1"]
+        },
+        "description": "Retrieve a specific person by their ID"
+      }
+    },
+    {
+      "name": "Get All Vehicles",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/vehicles",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "vehicles"]
+        },
+        "description": "Retrieve all vehicles"
+      }
+    },
+    {
+      "name": "Get Vehicle by Registration Number",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/vehicles/ABC123",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "vehicles", "ABC123"]
+        },
+        "description": "Retrieve a specific vehicle by registration number"
+      }
+    },
+    {
+      "name": "Get Vehicles by Brand Statistics",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/stats/vehicles-by-brand",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "stats", "vehicles-by-brand"]
+        },
+        "description": "Get count of vehicles grouped by brand"
+      }
+    },
+    {
+      "name": "Create New Person (POST)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"regnumber\": \"XYZ999\",\n  \"fname\": \"Test\",\n  \"lname\": \"User\",\n  \"height\": 180\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/persons",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "persons"]
+        },
+        "description": "Create a new person (test POST endpoint)"
+      }
+    },
+    {
+      "name": "Create New Vehicle (POST)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"regnum\": \"XYZ999\",\n  \"brand\": \"Tesla\",\n  \"color\": \"White\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/vehicles",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "vehicles"]
+        },
+        "description": "Create a new vehicle (test POST endpoint)"
+      }
+    }
+  ]
+}
