@@ -55,7 +55,7 @@
                             <tr th:each="entry : ${brandData}">
                                 <td th:text="${entry.key}">Ford</td>
                                 <td th:text="${entry.value}">2</td>
-                                <td th:text="${totalVehicles > 0 ? #numbers.formatPercent(entry.value / totalVehicles) : '0%'}">50%</td>
+                                <td th:text="${totalVehicles > 0 ? #numbers.formatDecimal(entry.value * 100.0 / totalVehicles, 1, 1) + '%' : '0%'}">50%</td>
                             </tr>
                         </tbody>
                     </table>
@@ -100,7 +100,7 @@
                                     </span>
                                 </td>
                                 <td th:text="${entry.value}">2</td>
-                                <td th:text="${totalVehicles > 0 ? #numbers.formatPercent(entry.value / totalVehicles) : '0%'}">50%</td>
+                                <td th:text="${totalVehicles > 0 ? #numbers.formatDecimal(entry.value * 100.0 / totalVehicles, 1, 1) + '%' : '0%'}">50%</td>
                             </tr>
                         </tbody>
                     </table>
@@ -126,7 +126,7 @@
                 <ul>
                     <li>Total registered persons: <strong th:text="${totalPersons ?: 0}">0</strong></li>
                     <li>Average height: <strong th:text="${totalPersons > 0 ? '170 cm' : 'N/A'}">N/A</strong></li>
-                    <li>Vehicle ownership rate: <strong th:text="${totalPersons > 0 and totalVehicles > 0 ? #numbers.formatPercent(totalVehicles / totalPersons) : '0%'}">0%</strong></li>
+                    <li>Vehicle ownership rate: <strong th:text="${totalPersons > 0 and totalVehicles > 0 ? #numbers.formatDecimal(totalVehicles * 100.0 / totalPersons, 1, 1) + '%' : '0%'}">0%</strong></li>
                 </ul>
             </div>
             

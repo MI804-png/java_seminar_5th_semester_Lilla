@@ -120,12 +120,12 @@
                     <a th:href="@{/admin/users}" class="btn btn-primary">
                         <i class="fas fa-users"></i><br>Manage Users
                     </a>
-                    <button onclick="exportUsers()" class="btn btn-success">
+                    <a th:href="@{/admin/users/export}" class="btn btn-success">
                         <i class="fas fa-download"></i><br>Export Users
-                    </button>
-                    <button onclick="viewUserStats()" class="btn btn-info">
+                    </a>
+                    <a th:href="@{/chart}" class="btn btn-info">
                         <i class="fas fa-chart-bar"></i><br>User Analytics
-                    </button>
+                    </a>
                 </div>
             </div>
             
@@ -323,29 +323,32 @@
         }
         
         // Admin action functions
-        function exportUsers() {
-            showAlert('User export initiated. Download will start shortly.', 'info');
-        }
-        
-        function viewUserStats() {
-            showAlert('Generating user analytics report...', 'info');
-        }
-        
         function backupDatabase() {
-            if (confirm('Are you sure you want to backup the database?')) {
-                showAlert('Database backup started. This may take a few minutes.', 'success');
+            if (confirm('Create database backup? This will export all data to a backup file.')) {
+                showAlert('Database backup feature: In production, this would create a SQL dump or backup file.', 'info');
             }
         }
         
         function clearCache() {
-            if (confirm('Clear application cache?')) {
-                showAlert('Cache cleared successfully!', 'success');
+            if (confirm('Clear application cache? This will reset all cached data.')) {
+                const csrfToken = document.querySelector('meta[name="_csrf"]');
+                const token = csrfToken ? csrfToken.getAttribute('content') : '';
+                
+                fetch('/admin/cache/clear', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': token
+                    }
+                })
+                .then(response => response.text())
+                .then(message => showAlert(message, 'success'))
+                .catch(error => showAlert('Error clearing cache: ' + error, 'danger'));
             }
         }
         
         function optimizeDB() {
-            if (confirm('Optimize database? This may affect performance temporarily.')) {
-                showAlert('Database optimization started...', 'info');
+            if (confirm('Optimize database? This will analyze and optimize all tables.')) {
+                showAlert('Database optimization: In production, this would run OPTIMIZE TABLE commands.', 'info');
             }
         }
         

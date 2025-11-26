@@ -1,228 +1,93 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" 
-      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${pageTitle != null ? pageTitle + ' - Vehicle Registration System' : 'Vehicle Registration System'}">Vehicle Registration System</title>
-    
-    <!-- CSS -->
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-    
-    <!-- Chart.js for statistics -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-    <!-- Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
-<body>
-    <!-- Header -->
-    <header class="header">
-        <nav class="navbar">
-            <a th:href="@{/}" class="logo">
-                <i class="fas fa-car"></i> Vehicle Registration
-            </a>
-            
-            <ul class="nav-menu">
-                <li><a th:href="@{/}"><i class="fas fa-home"></i> Home</a></li>
-                <li><a th:href="@{/database}"><i class="fas fa-database"></i> Database</a></li>
-                <li><a th:href="@{/contact}"><i class="fas fa-envelope"></i> Contact</a></li>
-                <li sec:authorize="hasRole('REGISTERED') or hasRole('ADMIN')">
-                    <a th:href="@{/messages}"><i class="fas fa-comments"></i> Messages</a>
-                </li>
-                <li><a th:href="@{/chart}"><i class="fas fa-chart-bar"></i> Charts</a></li>
-                <li><a th:href="@{/crud}"><i class="fas fa-edit"></i> CRUD</a></li>
-                <li sec:authorize="hasRole('ADMIN')">
-                    <a th:href="@{/admin}"><i class="fas fa-cog"></i> Admin</a>
-                </li>
-                
-                <li sec:authorize="isAnonymous()">
-                    <a th:href="@{/login}"><i class="fas fa-sign-in-alt"></i> Login</a>
-                </li>
-                <li sec:authorize="isAnonymous()">
-                    <a th:href="@{/register}"><i class="fas fa-user-plus"></i> Register</a>
-                </li>
-                <li sec:authorize="isAuthenticated()">
-                    <span>Welcome, <span sec:authentication="name">User</span></span>
-                </li>
-                <li sec:authorize="isAuthenticated()">
-                    <a th:href="@{/logout}"><i class="fas fa-sign-out-alt"></i> Logout</a>
-                </li>
-            </ul>
-            
-            <div class="nav-toggle">
-                <span class="hamburger"></span>
-                <span class="hamburger"></span>
-                <span class="hamburger"></span>
-            </div>
-        </nav>
-    </header>
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+      layout:decorate="~{fragments/layout}">
 
-    <!-- Main Content -->
-    <main class="main-content">
-        <div class="container">
-            <!-- Page Header -->
-            <div class="page-header" th:if="${pageTitle}">
-                <h1 class="page-title" th:text="${pageTitle}">Page Title</h1>
-            </div>
-
-            <!-- Alert Messages -->
-            <div th:if="${success}" class="alert alert-success">
-                <i class="fas fa-check-circle"></i> <span th:text="${success}">Success message</span>
-            </div>
-            
-            <div th:if="${error}" class="alert alert-danger">
-                <i class="fas fa-exclamation-circle"></i> <span th:text="${error}">Error message</span>
-            </div>
-            
-            <div th:if="${param.logout}" class="alert alert-info">
-                <i class="fas fa-info-circle"></i> You have been successfully logged out.
-            </div>
-            
-            <div th:if="${param.error}" class="alert alert-danger">
-                <i class="fas fa-exclamation-triangle"></i> Invalid username or password.
-            </div>
+<div layout:fragment="content">
     <!-- Hero Section -->
-    <div class="hero-section fade-in">
-        <div class="card">
-            <div class="text-center">
-                <i class="fas fa-car" style="font-size: 4rem; color: var(--secondary-color); margin-bottom: 1rem;"></i>
-                <h1 style="font-size: 3rem; margin-bottom: 1rem; color: var(--primary-color);">
-                    Welcome to Vehicle Registration System
-                </h1>
-                <p style="font-size: 1.25rem; color: #666; margin-bottom: 2rem;">
-                    Your comprehensive solution for managing vehicle registrations, owners, and contact information.
-                </p>
-                <div>
-                    <a th:href="@{/database}" class="btn btn-primary btn-lg">
-                        <i class="fas fa-database"></i> Explore Database
-                    </a>
-                    <a th:href="@{/contact}" class="btn btn-secondary btn-lg">
-                        <i class="fas fa-envelope"></i> Contact Us
-                    </a>
-                </div>
-            </div>
+    <div class="hero-section">
+        <h2 class="hero-title">
+            <i class="fas fa-car"></i> Vehicle Registration Management System
+        </h2>
+        <p class="hero-subtitle">Efficient and Modern Vehicle Registration Platform</p>
+        <div class="hero-buttons">
+            <a th:href="@{/database}" class="btn btn-primary">
+                <i class="fas fa-database"></i> View Database
+            </a>
+            <a th:href="@{/contact}" class="btn btn-secondary">
+                <i class="fas fa-envelope"></i> Contact Us
+            </a>
         </div>
     </div>
 
-    <!-- Statistics Overview -->
-    <div class="stats-grid" th:if="${totalPersons != null}">
-        <div class="stat-card slide-in-left">
-            <div class="stat-number" th:text="${totalPersons ?: 0}">0</div>
+    <!-- Statistics Cards -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-users"></i></div>
+            <div class="stat-number" th:text="${totalPersons}">0</div>
             <div class="stat-label">Registered Persons</div>
         </div>
-        <div class="stat-card slide-in-left">
-            <div class="stat-number" th:text="${totalVehicles ?: 0}">0</div>
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-car"></i></div>
+            <div class="stat-number" th:text="${totalVehicles}">0</div>
             <div class="stat-label">Vehicles</div>
         </div>
-        <div class="stat-card slide-in-left">
-            <div class="stat-number" th:text="${totalMessages ?: 0}">0</div>
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-phone"></i></div>
+            <div class="stat-number" th:text="${totalPhones}">0</div>
+            <div class="stat-label">Phone Numbers</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-envelope"></i></div>
+            <div class="stat-number" th:text="${totalMessages}">0</div>
             <div class="stat-label">Messages</div>
         </div>
     </div>
 
     <!-- Features Section -->
-    <div class="row">
-        <div class="col-4">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">
-                        <i class="fas fa-database"></i> Database Management
-                    </h3>
-                </div>
-                <p>Browse and manage our comprehensive database of persons, vehicles, and phone numbers. 
-                   View relationships between owners and their vehicles.</p>
-                <a th:href="@{/database}" class="btn btn-primary">
-                    <i class="fas fa-arrow-right"></i> View Database
-                </a>
+    <div class="features-section">
+        <h3 class="section-title">Our Features</h3>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-lock"></i></div>
+                <h4>Secure Authentication</h4>
+                <p>Role-based access control with encrypted passwords and secure login system.</p>
             </div>
-        </div>
-        
-        <div class="col-4">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">
-                        <i class="fas fa-chart-bar"></i> Statistics & Charts
-                    </h3>
-                </div>
-                <p>Visualize your data with interactive charts and statistics. 
-                   See vehicle distribution by brand, color, and other metrics.</p>
-                <a th:href="@{/chart}" class="btn btn-success">
-                    <i class="fas fa-arrow-right"></i> View Charts
-                </a>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-database"></i></div>
+                <h4>Database Management</h4>
+                <p>Comprehensive database with persons, vehicles, and phone number records.</p>
             </div>
-        </div>
-        
-        <div class="col-4">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">
-                        <i class="fas fa-edit"></i> CRUD Operations
-                    </h3>
-                </div>
-                <p>Perform full Create, Read, Update, and Delete operations on person records. 
-                   Manage the complete lifecycle of data entries.</p>
-                <a th:href="@{/crud}" class="btn btn-warning">
-                    <i class="fas fa-arrow-right"></i> Manage Data
-                </a>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-edit"></i></div>
+                <h4>CRUD Operations</h4>
+                <p>Full Create, Read, Update, Delete functionality for managing records.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-chart-bar"></i></div>
+                <h4>Statistics & Charts</h4>
+                <p>Interactive charts and visualizations for better data insights.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-code"></i></div>
+                <h4>RESTful API</h4>
+                <p>Complete REST API for programmatic access to all data.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-mobile-alt"></i></div>
+                <h4>Responsive Design</h4>
+                <p>Mobile-first design that works perfectly on all devices.</p>
             </div>
         </div>
     </div>
 
     <!-- About Section -->
-    <div class="card">
-        <div class="card-header">
-            <h2 class="card-title">About Our System</h2>
+    <div class="about-section">
+        <h3 class="section-title">About Our System</h3>
+        <div class="about-content">
+            <p>The Vehicle Registration Management System is a comprehensive platform designed to streamline vehicle registration processes. Built with modern technologies including Java Spring Boot, Spring Security, and MySQL, our system provides a secure and efficient way to manage vehicle records, owner information, and related data.</p>
+            <p>Whether you're an administrator managing the entire database or a registered user updating your information, our system offers an intuitive interface and powerful features to meet your needs.</p>
         </div>
-        <div class="row">
-            <div class="col-6">
-                <h4><i class="fas fa-shield-alt"></i> Secure Authentication</h4>
-                <p>Our system implements role-based security with visitor, registered user, and admin roles. 
-                   Each user has appropriate access levels to maintain data integrity.</p>
-                
-                <h4><i class="fas fa-mobile-alt"></i> Responsive Design</h4>
-                <p>Built with modern responsive web design principles, our system works seamlessly 
-                   across desktop, tablet, and mobile devices.</p>
-            </div>
-            <div class="col-6">
-                <h4><i class="fas fa-cogs"></i> Modern Technology Stack</h4>
-                <ul>
-                    <li><strong>Backend:</strong> Java Spring Boot with JPA/Hibernate</li>
-                    <li><strong>Frontend:</strong> Thymeleaf templates with responsive CSS</li>
-                    <li><strong>Database:</strong> MySQL with optimized queries</li>
-                    <li><strong>Security:</strong> Spring Security with password encryption</li>
-                    <li><strong>Charts:</strong> Chart.js for interactive visualizations</li>
-                    <li><strong>API:</strong> RESTful endpoints for external integration</li>
-                </ul>
-            </div>
-        </div>
-        
-        <div class="text-center mt-2">
-            <p><strong>Developed by:</strong> Mikhael Nabil Salama Rezk (IHUTSC) & Szabo Lilla</p>
-            <p><em>John von Neumann University - Vehicle Registration Management System</em></p>
-        </div>        </div>
-    </main>
+    </div>
+</div>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <p>&copy; 2025 Vehicle Registration System. Created by Mikhael Nabil Salama Rezk & Szabo Lilla.</p>
-            <p>Built with Spring Boot, Thymeleaf, and modern web technologies.</p>
-        </div>
-    </footer>
-
-    <!-- JavaScript -->
-    <script th:src="@{/js/main.js}"></script>
-    
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Add animation delays for staggered effect
-            const statCards = document.querySelectorAll('.stat-card');
-            statCards.forEach((card, index) => {
-                card.style.animationDelay = `${index * 0.2}s`;
-            });
-        });
-    </script>
-
-</body>
-</html>

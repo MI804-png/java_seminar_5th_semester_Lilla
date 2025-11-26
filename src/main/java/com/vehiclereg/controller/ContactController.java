@@ -10,7 +10,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import jakarta.validation.Valid;
+
+import javax.validation.Valid;
 
 @Controller
 @RequestMapping("/contact")
@@ -30,11 +31,17 @@ public class ContactController {
     }
 
     @PostMapping
-    public String submitContact(@Valid @ModelAttribute ContactMessage contactMessage, 
+    public String submitContact(@Valid @ModelAttribute("contactMessage") ContactMessage contactMessage, 
                                BindingResult result, RedirectAttributes redirectAttributes, Model model) {
         model.addAttribute("pageTitle", "Contact Us");
         
+        System.out.println("=== Contact POST request ===");
+        System.out.println("Has errors: " + result.hasErrors());
+        System.out.println("Error count: " + result.getErrorCount());
+        
         if (result.hasErrors()) {
+            System.out.println("Validation errors: " + result.getAllErrors());
+            model.addAttribute("error", "Please fix the validation errors below.");
             return "contact/index";
         }
 
@@ -43,6 +50,7 @@ public class ContactController {
             redirectAttributes.addFlashAttribute("success", "Thank you for your message! We will get back to you soon.");
             return "redirect:/contact";
         } catch (Exception e) {
+            System.out.println("Contact save error: " + e.getMessage());
             model.addAttribute("error", "An error occurred while sending your message. Please try again.");
             return "contact/index";
         }

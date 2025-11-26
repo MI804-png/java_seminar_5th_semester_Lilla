@@ -42,18 +42,23 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(authz -> authz
-                .requestMatchers("/", "/home", "/register", "/contact", "/database", "/chart", "/css/**", "/js/**", "/images/**").permitAll()
-                .requestMatchers("/messages/**").hasAnyRole("REGISTERED", "ADMIN")
-                .requestMatchers("/admin/**").hasRole("ADMIN")
-                .requestMatchers("/api/**").hasAnyRole("REGISTERED", "ADMIN")
+        http.authorizeRequests(authz -> authz
+                .antMatchers("/", "/home", "/database", "/chart", "/css/**", "/js/**", "/images/**").permitAll()
+                .antMatchers("/register", "/register/**").permitAll()
+                .antMatchers("/contact", "/contact/**").permitAll()
+                .antMatchers("/crud/**", "/vehicles/**").permitAll()
+                .antMatchers("/messages/**").hasAnyRole("REGISTERED", "ADMIN")
+                .antMatchers("/admin/**").hasRole("ADMIN")
+                .antMatchers("/api/**").hasAnyRole("REGISTERED", "ADMIN")
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
                 .loginPage("/login")
-                .loginProcessingUrl("/perform_login")
+                .loginProcessingUrl("/login")
                 .defaultSuccessUrl("/", true)
                 .failureUrl("/login?error=true")
+                .usernameParameter("username")
+                .passwordParameter("password")
                 .permitAll()
             )
             .logout(logout -> logout
@@ -62,7 +67,7 @@ public class SecurityConfig {
                 .permitAll()
             )
             .csrf(csrf -> csrf
-                .ignoringRequestMatchers("/api/**")
+                .ignoringAntMatchers("/api/**")
             );
 
         http.authenticationProvider(authenticationProvider());

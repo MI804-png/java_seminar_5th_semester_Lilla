@@ -56,23 +56,7 @@ public class DataLoader implements CommandLineRunner {
             
             System.out.println("✓ Initial users created: admin/admin123, user/user123");
         }
-        
-        // Load persons data if not exist (from persons.sql)
-        if (personRepository.count() == 0) {
-            Person person1 = new Person("John Smith", "ABC123", 175);
-            Person person2 = new Person("Tom Grey", "FGH456", 168);
-            Person person3 = new Person("Viola Grant", "SDF345", 165);
-            Person person4 = new Person("Steve Roberts", "HJK678", 160);
-            
-            personRepository.save(person1);
-            personRepository.save(person2);
-            personRepository.save(person3);
-            personRepository.save(person4);
-            
-            System.out.println("✓ Initial persons data loaded");
-        }
-        
-        // Load vehicles data if not exist
+          // Load vehicles data first (since persons reference vehicles)
         if (vehicleRepository.count() == 0) {
             Vehicle vehicle1 = new Vehicle("ABC123", "Ford", "red");
             Vehicle vehicle2 = new Vehicle("FGH456", "Skoda", "blue");
@@ -85,6 +69,21 @@ public class DataLoader implements CommandLineRunner {
             vehicleRepository.save(vehicle4);
             
             System.out.println("✓ Initial vehicles data loaded");
+        }
+        
+        // Load persons data if not exist (after vehicles are loaded)
+        if (personRepository.count() == 0) {
+            Person person1 = new Person("John Smith", "ABC123", 175);
+            Person person2 = new Person("Tom Grey", "FGH456", 168);
+            Person person3 = new Person("Viola Grant", "SDF345", 165);
+            Person person4 = new Person("Steve Roberts", "HJK678", 160);
+            
+            personRepository.save(person1);
+            personRepository.save(person2);
+            personRepository.save(person3);
+            personRepository.save(person4);
+            
+            System.out.println("✓ Initial persons data loaded");
         }
         
         // Load phones data if not exist

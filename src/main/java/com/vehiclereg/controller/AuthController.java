@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import jakarta.validation.Valid;
+import javax.validation.Valid;
 
 @Controller
 public class AuthController {
@@ -34,11 +34,17 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public String register(@Valid @ModelAttribute User user, BindingResult result, 
+    public String register(@Valid @ModelAttribute("user") User user, BindingResult result, 
                           RedirectAttributes redirectAttributes, Model model) {
         model.addAttribute("pageTitle", "Register");
         
+        System.out.println("=== Register POST request ===");
+        System.out.println("Has errors: " + result.hasErrors());
+        System.out.println("Error count: " + result.getErrorCount());
+        
         if (result.hasErrors()) {
+            System.out.println("Validation errors: " + result.getAllErrors());
+            model.addAttribute("error", "Please fix the validation errors below.");
             return "auth/register";
         }
 
@@ -47,6 +53,7 @@ public class AuthController {
             redirectAttributes.addFlashAttribute("success", "Registration successful! Please login.");
             return "redirect:/login";
         } catch (RuntimeException e) {
+            System.out.println("Registration error: " + e.getMessage());
             model.addAttribute("error", e.getMessage());
             return "auth/register";
         }

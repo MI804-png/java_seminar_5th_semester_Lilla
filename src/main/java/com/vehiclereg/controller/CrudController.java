@@ -7,7 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import jakarta.validation.Valid;
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,21 +43,32 @@ public class CrudController {
         model.addAttribute("pageTitle", "Add New Person");
         model.addAttribute("action", "Add");
         
+        System.out.println("=== Add Person POST request ===");
+        System.out.println("Person data: " + person.getName() + ", " + person.getRegnumber() + ", " + person.getHeight());
+        System.out.println("Has errors: " + result.hasErrors());
+        System.out.println("Error count: " + result.getErrorCount());
+        
         if (result.hasErrors()) {
+            System.out.println("Validation errors: " + result.getAllErrors());
+            model.addAttribute("error", "Please fix the validation errors below.");
             return "crud/form";
         }
 
         if (personRepository.existsByRegnumber(person.getRegnumber())) {
+            System.out.println("Registration number already exists: " + person.getRegnumber());
             model.addAttribute("error", "Registration number already exists!");
             return "crud/form";
         }
 
         try {
-            personRepository.save(person);
+            Person savedPerson = personRepository.save(person);
+            System.out.println("Person saved successfully with ID: " + savedPerson.getId());
             redirectAttributes.addFlashAttribute("success", "Person added successfully!");
             return "redirect:/crud";
         } catch (Exception e) {
-            model.addAttribute("error", "An error occurred while saving the person.");
+            System.err.println("Error saving person: " + e.getMessage());
+            e.printStackTrace();
+            model.addAttribute("error", "An error occurred while saving the person: " + e.getMessage());
             return "crud/form";
         }
     }

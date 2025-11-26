@@ -55,14 +55,15 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Add loading state to buttons
-    const submitButtons = document.querySelectorAll('button[type="submit"]');
-    submitButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            this.innerHTML = '<i class="spinner"></i> Processing...';
-            this.disabled = true;
-        });
-    });
+    // Add loading state to buttons - DISABLED to allow form submission
+    // The button disabling was preventing forms from submitting properly
+    // const submitButtons = document.querySelectorAll('button[type="submit"]');
+    // submitButtons.forEach(button => {
+    //     button.addEventListener('click', function() {
+    //         this.innerHTML = '<i class="spinner"></i> Processing...';
+    //         this.disabled = true;
+    //     });
+    // });
 
     // Table row highlighting
     const tableRows = document.querySelectorAll('table tbody tr');

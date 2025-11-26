@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+      layout:decorate="~{fragments/layout}">
+
+<div layout:fragment="content">
+    <!-- Vehicle Statistics -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-number" th:text="${#lists.size(vehicles)}">0</div>
+            <div class="stat-label">Total Vehicles</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" th:text="${#lists.isEmpty(vehicles) ? 0 : #lists.size(#lists.toList(vehicles.?[color == 'Red']))}">0</div>
+            <div class="stat-label">Red Vehicles</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" th:text="${#lists.isEmpty(vehicles) ? 0 : #lists.size(#sets.toSet(vehicles.![brand]).toArray())}">0</div>
+            <div class="stat-label">Different Brands</div>
+        </div>
+    </div>
+
+    <!-- Success/Error Messages -->
+    <div th:if="${success}" class="alert alert-success">
+        <i class="fas fa-check-circle"></i> <span th:text="${success}"></span>
+    </div>
+    
+    <div th:if="${error}" class="alert alert-danger">
+        <i class="fas fa-exclamation-circle"></i> <span th:text="${error}"></span>
+    </div>
+
+    <!-- Vehicles Table -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-car"></i> Vehicle Management
+            </h3>
+            <p>Manage all registered vehicles in the system</p>
+        </div>
+        
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Registration Number</th>
+                        <th>Brand</th>
+                        <th>Color</th>
+                        <th>Owner</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="vehicle : ${vehicles}">
+                        <td>
+                            <strong th:text="${vehicle.regnum}">ABC123</strong>
+                        </td>
+                        <td th:text="${vehicle.brand}">Toyota</td>
+                        <td>
+                            <span class="color-badge" 
+                                  th:classappend="${vehicle.color.toLowerCase() == 'white' or vehicle.color.toLowerCase() == 'yellow'} ? 'text-dark' : 'text-light'"
+                                  th:attr="style='background-color: ' + ${vehicle.color.toLowerCase()}" 
+                                  th:text="${vehicle.color}">Red</span>
+                        </td>
+                        <td>
+                            <span th:if="${vehicle.owner != null}" th:text="${vehicle.owner.name}">Owner Name</span>
+                            <span th:if="${vehicle.owner == null}" class="text-muted"><i>No owner</i></span>
+                        </td>
+                        <td>
+                            <a th:href="@{/vehicles/view/{regnum}(regnum=${vehicle.regnum})}" class="btn btn-sm btn-info">
+                                <i class="fas fa-eye"></i> View
+                            </a>
+                            <a th:href="@{/vehicles/edit/{regnum}(regnum=${vehicle.regnum})}" class="btn btn-sm btn-warning">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                            <form th:action="@{/vehicles/delete/{regnum}(regnum=${vehicle.regnum})}" method="post" style="display: inline;">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                <button type="submit" class="btn btn-sm btn-danger" 
+                                        th:attr="data-regnum=${vehicle.regnum}"
+                                        onclick="return confirm('Are you sure you want to delete vehicle ' + this.getAttribute('data-regnum') + '?');">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(vehicles)}">
+                        <td colspan="5" class="text-center">
+                            <i class="fas fa-info-circle"></i> No vehicles found. 
+                            <a th:href="@{/vehicles/add}" class="btn btn-sm btn-primary">Add the first vehicle</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="card-footer">
+            <a th:href="@{/vehicles/add}" class="btn btn-success">
+                <i class="fas fa-plus"></i> Add New Vehicle
+            </a>
+            <a th:href="@{/database}" class="btn btn-secondary">
+                <i class="fas fa-database"></i> View Database
+            </a>
+        </div>
+    </div>
+
+    <!-- Vehicle Information -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-info-circle"></i> Vehicle Information
+            </h3>
+        </div>
+        
+        <div class="row">
+            <div class="col-6">
+                <h4><i class="fas fa-car"></i> Vehicle Management Features</h4>
+                <ul>
+                    <li><strong>Add New Vehicles:</strong> Register new vehicles with brand and color</li>
+                    <li><strong>Edit Details:</strong> Update vehicle brand and color</li>
+                    <li><strong>Delete Vehicles:</strong> Remove vehicles from the system</li>
+                    <li><strong>View Details:</strong> See complete vehicle information</li>
+                </ul>
+                
+                <h4><i class="fas fa-link"></i> Related Operations</h4>
+                <ul>
+                    <li>Link vehicles to persons using matching registration numbers</li>
+                    <li>View all data in the Database interface</li>
+                    <li>Access statistics in the Charts section</li>
+                </ul>
+            </div>
+            
+            <div class="col-6">
+                <h4><i class="fas fa-lightbulb"></i> Tips</h4>
+                <ul>
+                    <li>Registration numbers must be exactly 6 alphanumeric characters</li>
+                    <li>Use the same registration number for person and vehicle to link them</li>
+                    <li>Brand and color are required fields</li>
+                    <li>Deleting a vehicle doesn't delete the owner person</li>
+                </ul>
+                
+                <div class="alert alert-info">
+                    <h5><i class="fas fa-exclamation-triangle"></i> Important</h5>
+                    <p>The registration number is the primary key and cannot be changed after creation. 
+                       To change a registration number, delete the vehicle and create a new one.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block layout:fragment="scripts">
+    <style>
+        .color-badge {
+            padding: 0.35rem 0.65rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+    </style>
+</th:block>
+
+</html>

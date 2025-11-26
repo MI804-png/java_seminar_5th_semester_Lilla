@@ -170,7 +170,17 @@
             const replySubject = subject.startsWith('Re:') ? subject : 'Re: ' + subject;
             const mailtoUrl = `mailto:${email}?subject=${encodeURIComponent(replySubject)}`;
             
-            window.location.href = mailtoUrl;
+            // Show confirmation dialog with email info
+            const message = `Reply to:\n\nName: ${name}\nEmail: ${email}\nSubject: ${replySubject}\n\nThis will open your default email client.`;
+            
+            if (confirm(message)) {
+                try {
+                    window.location.href = mailtoUrl;
+                    showAlert('Email client opened. If nothing happened, please email ' + email + ' manually.', 'info');
+                } catch (e) {
+                    showAlert('Could not open email client. Please copy the email address: ' + email, 'warning');
+                }
+            }
         }
         
         function copyEmail(button) {
