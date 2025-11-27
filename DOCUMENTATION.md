@@ -5,7 +5,9 @@
 **Course:** Java Applications - 5th Semester  
 **Date:** November 27, 2025  
 **Repository:** https://github.com/MI804-png/java_seminar_5th_semester_Lilla  
-**Live Application:** http://rivendell.nje.hu:9443/ihutsc-se/
+**Live Application:** http://localhost:9443/ihutsc-se/ (via SSH tunnel)  
+**Server:** rivendell.nje.hu (192.168.14.8 - private network)  
+**Status:** ✅ Successfully Deployed & Running
 
 ---
 
@@ -35,22 +37,24 @@ The Vehicle Registration Management System is a full-stack web application built
 
 **Key Achievements:**
 - ✅ All 14 course requirements completed (30/30 points)
+- ✅ Migrated to Spring Boot 3.2.0 for Tomcat 11 compatibility
+- ✅ Successfully deployed and running on production server
 - ✅ Clean, maintainable code following Spring Boot best practices
 - ✅ Responsive UI with Bootstrap and Thymeleaf templates
-- ✅ MySQL database integration with JPA/Hibernate
-- ✅ Production deployment on Linux Tomcat server
-- ✅ Comprehensive Git version control (7 commits)
+- ✅ MySQL database integration with JPA/Hibernate (Jakarta EE 9+)
+- ✅ Production deployment on Linux Tomcat 11 server
+- ✅ Comprehensive Git version control (14+ commits)
 
 ---
 
 ## Technical Stack
 
 ### Backend
-- **Framework:** Spring Boot 2.7.18
-- **Language:** Java 11
+- **Framework:** Spring Boot 3.2.0 (upgraded from 2.7.18)
+- **Language:** Java 17 (upgraded from Java 11)
 - **Build Tool:** Maven 3.9.5
-- **ORM:** Hibernate/JPA
-- **Security:** Spring Security
+- **ORM:** Hibernate/JPA (Jakarta EE 9+)
+- **Security:** Spring Security 6
 - **Validation:** Jakarta Bean Validation
 
 ### Frontend
@@ -66,25 +70,28 @@ The Vehicle Registration Management System is a full-stack web application built
 
 ### Deployment
 - **Development Server:** Embedded Tomcat (port 8080)
-- **Production Server:** Standalone Tomcat 9 (port 9443)
-- **Server:** rivendell.nje.hu
-- **Packaging:** WAR file (ihutsc-se.war)
+- **Production Server:** Apache Tomcat 11.0.7 (port 9443)
+- **Server:** rivendell.nje.hu (192.168.14.8)
+- **Packaging:** WAR file (ihutsc-se.war, 60.96 MB)
+- **Access:** SSH tunnel required (private network)
+- **Deployment Date:** November 27, 2025
 
 ---
 
 ## System Requirements
 
 ### Development Environment
-- Java JDK 11 or higher
+- Java JDK 17 or higher (required for Spring Boot 3)
 - Maven 3.6+ (or use included Maven wrapper)
 - Git for version control
 - IDE: IntelliJ IDEA / Eclipse / VS Code
 
 ### Production Environment
-- Linux server with Tomcat 9
-- MySQL 8.0 database server
-- Java 11 runtime
-- SSH access for deployment
+- Linux server with Apache Tomcat 11.0.7
+- MySQL 8.0 / MariaDB database server
+- Java 17 runtime (minimum)
+- SSH access for deployment and tunnel creation
+- WinSCP or scp for file transfer
 
 ---
 
@@ -477,7 +484,8 @@ mvnw.cmd spring-boot:run
 ### Production Deployment to rivendell.nje.hu
 
 #### Prerequisites
-- Server credentials (username: student208)
+- Java 17 installed (required for Spring Boot 3)
+- Server credentials (username: student208, password: abc123456)
 - WinSCP or SSH client installed
 - Production WAR file built
 
@@ -486,71 +494,110 @@ mvnw.cmd spring-boot:run
 ```powershell
 cd c:\java_seminar\java_seminar\vehicle-registration-app
 
-# Set JAVA_HOME
-$env:JAVA_HOME = "C:\Program Files\Microsoft\jdk-11.0.16.101-hotspot"
+# Set JAVA_HOME to Java 17
+$env:JAVA_HOME = "C:\Program Files\Microsoft\jdk-17.0.17.10-hotspot"
+$env:Path = "$env:JAVA_HOME\bin;$env:Path"
+
+# Verify Java version
+java -version  # Should show version 17
 
 # Build WAR
 .\mvnw.cmd clean package -DskipTests
 ```
 
-**Output:** `target/ihutsc-se.war` (56.7 MB)
+**Output:** `target/ihutsc-se.war` (60.96 MB)
 
 #### Step 2: Deploy Using PowerShell Script
 
 ```powershell
-# Run deployment script
-.\deploy.ps1
+# Run deployment script with password
+.\deploy.ps1 -Password "abc123456"
 
 # Script will:
 # 1. Check if WAR exists
-# 2. Find WinSCP or pscp
-# 3. Prompt for password
-# 4. Upload to server
-# 5. Move to Tomcat webapps
-# 6. Verify deployment
+# 2. Find WinSCP installation
+# 3. Upload to server using provided password
+# 4. Move to /opt/tomcat/webapps/
+# 5. Verify deployment
+# 6. Display application URL
 ```
 
-#### Step 3: Manual Deployment (Alternative)
+**Deployment Output:**
+```
+======================================
+Deploying to Tomcat Server
+======================================
+Server: rivendell.nje.hu
+User: student208
+WAR File: target/ihutsc-se.war
 
-**Option A: WinSCP GUI**
-1. Open WinSCP
-2. Connect to rivendell.nje.hu:22
-3. Login: student208 / (your password)
-4. Navigate to `/opt/tomcat/webapps/`
-5. Upload `ihutsc-se.war`
-6. Wait 30-60 seconds for auto-deployment
+WAR file found (60.96 MB)
+Uploading WAR file using WinSCP...
+SUCCESS! Deployment completed.
 
-**Option B: Command Line**
-```bash
-# Upload WAR
-scp -P 22 target/ihutsc-se.war student208@rivendell.nje.hu:/home/student208/
+Your application should be available at:
+  http://localhost:9443/ihutsc-se/ (via SSH tunnel)
+```
 
-# SSH to server
-ssh student208@rivendell.nje.hu
+#### Step 3: Create SSH Tunnel (Required for Access)
 
-# Move to Tomcat
-cp /home/student208/ihutsc-se.war /opt/tomcat/webapps/
+The server is on a private network (192.168.14.8), so direct access is not possible. You must create an SSH tunnel:
 
-# Verify
-ls -lh /opt/tomcat/webapps/ihutsc-se*
+```powershell
+# Start tunnel in a new PowerShell window
+ssh -L 9443:localhost:9443 student208@rivendell.nje.hu
+
+# Enter password when prompted: abc123456
+# Keep this window open while using the application
+```
+
+**Access the application at:**
+```
+http://localhost:9443/ihutsc-se/
 ```
 
 #### Step 4: Verify Deployment
 
-1. **Check Tomcat Manager:**
-   - URL: http://rivendell.nje.hu:9443/manager/text/list
-   - User: test / test*
-   - Look for `/ihutsc-se` in running applications
-
-2. **Access Application:**
-   - URL: http://rivendell.nje.hu:9443/ihutsc-se/
-   - Login: admin / admin123
-
-3. **Check Logs (if issues):**
+**Check via SSH:**
 ```bash
 ssh student208@rivendell.nje.hu
-tail -f /opt/tomcat/logs/catalina.out
+
+# Check WAR file exists
+ls -lh /opt/tomcat/webapps/ihutsc-se.war
+
+# Check application logs
+tail -100 /opt/tomcat/logs/catalina.out | grep -E "Started|VehicleRegistration"
 ```
+
+**Expected output:**
+```
+Started ServletInitializer in 3.243 seconds
+✓ Initial users created: admin/admin123, user/user123
+✓ Initial vehicles data loaded
+✓ Initial persons data loaded
+✓ Initial phones data loaded
+✓ Sample contact messages loaded
+=== Data initialization completed ===
+```
+
+#### Step 5: Access the Application
+
+**Via SSH Tunnel (Required):**
+1. Keep the SSH tunnel window open
+2. Open browser to: **http://localhost:9443/ihutsc-se/**
+3. Login with:
+   - Admin: `admin` / `admin123`
+   - User: `user` / `user123`
+
+**Note:** Direct access to `http://rivendell.nje.hu:9443/ihutsc-se/` will fail because the server is on a private network (192.168.14.8). Always use the SSH tunnel and localhost URL.
+
+#### Deployment Status
+
+✅ **Successfully Deployed** (November 27, 2025)
+- Server: rivendell.nje.hu (Apache Tomcat 11.0.7)
+- Application: Running and responsive
+- Database: MySQL db208 connected
+- All data initialized successfully
 
 #### Production Configuration
 
@@ -559,6 +606,13 @@ tail -f /opt/tomcat/logs/catalina.out
 - Username: `studb208`
 - Password: `abc123`
 - Auto-create tables: `spring.jpa.hibernate.ddl-auto=update`
+
+**Connection Pool (HikariCP):**
+```properties
+spring.datasource.hikari.maximum-pool-size=2
+spring.datasource.hikari.minimum-idle=1
+spring.datasource.hikari.connection-timeout=30000
+```
 
 **Application Properties:**
 ```properties
@@ -570,6 +624,10 @@ spring.datasource.url=jdbc:mysql://localhost:3306/db208
 spring.datasource.username=studb208
 spring.datasource.password=abc123
 spring.jpa.hibernate.ddl-auto=update
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect
+
+# Context path
+server.servlet.context-path=/ihutsc-se
 ```
 
 ---
@@ -577,7 +635,7 @@ spring.jpa.hibernate.ddl-auto=update
 ## User Guide
 
 ### Login
-1. Navigate to http://localhost:8080 (or production URL)
+1. Navigate to http://localhost:8080 (development) or http://localhost:9443/ihutsc-se/ (production via tunnel)
 2. Enter credentials:
    - Admin: `admin` / `admin123`
    - User: `user` / `user123`
