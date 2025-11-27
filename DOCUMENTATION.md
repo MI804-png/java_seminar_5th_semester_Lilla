@@ -1,7 +1,10 @@
 # Vehicle Registration Management System - Documentation
 
 **Project Name:** Vehicle Registration Management System  
-**Student:** Lilla (Neptun: IHUTSC)  
+**Students:**  
+- Mikhael Nabil  
+- Szabó Lilla (Neptun: IHUTSC)  
+
 **Course:** Java Applications - 5th Semester  
 **Date:** November 27, 2025  
 **Repository:** https://github.com/MI804-png/java_seminar_5th_semester_Lilla  
