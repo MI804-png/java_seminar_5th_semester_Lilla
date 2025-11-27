@@ -43,18 +43,17 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .authorizeRequests(authz -> authz
-                .antMatchers("/", "/home", "/database", "/chart", "/css/**", "/js/**", "/images/**").permitAll()
-                .antMatchers("/register", "/register/**").permitAll()
-                .antMatchers("/contact", "/contact/**").permitAll()
-                .antMatchers("/crud/**", "/vehicles/**").permitAll()
-                .antMatchers("/messages/**").hasAnyRole("REGISTERED", "ADMIN")
-                .antMatchers("/admin/**").hasRole("ADMIN")
-                .antMatchers("/api/**").hasAnyRole("REGISTERED", "ADMIN")
+            .authorizeHttpRequests(authz -> authz
+                .requestMatchers("/", "/home", "/database", "/chart", "/css/**", "/js/**", "/images/**").permitAll()
+                .requestMatchers("/register", "/register/**").permitAll()
+                .requestMatchers("/contact", "/contact/**").permitAll()
+                .requestMatchers("/crud/**", "/vehicles/**").permitAll()
+                .requestMatchers("/messages/**").hasAnyRole("REGISTERED", "ADMIN")
+                .requestMatchers("/admin/**").hasRole("ADMIN")
+                .requestMatchers("/api/**").hasAnyRole("REGISTERED", "ADMIN")
                 .anyRequest().authenticated()
             )
-            .httpBasic()
-            .and()
+            .httpBasic(basic -> {})
             .formLogin(form -> form
                 .loginPage("/login")
                 .loginProcessingUrl("/login")
@@ -70,7 +69,7 @@ public class SecurityConfig {
                 .permitAll()
             )
             .csrf(csrf -> csrf
-                .ignoringAntMatchers("/api/**")
+                .ignoringRequestMatchers("/api/**")
             )
             .authenticationProvider(authenticationProvider());
 

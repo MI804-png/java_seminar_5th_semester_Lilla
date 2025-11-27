@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.7.18</version>
+		<version>3.2.0</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	
@@ -16,7 +16,7 @@
 	<name>vehicle-registration</name>
 	<description>Vehicle Registration Management System</description>
 		<properties>
-		<java.version>11</java.version>
+		<java.version>17</java.version>
 	</properties>
 	
 	<dependencies>
@@ -47,7 +47,7 @@
 		</dependency>
 				<dependency>
 			<groupId>org.thymeleaf.extras</groupId>
-			<artifactId>thymeleaf-extras-springsecurity5</artifactId>
+			<artifactId>thymeleaf-extras-springsecurity6</artifactId>
 		</dependency>
 		
 		<!-- Thymeleaf Layout Dialect for layout:decorate -->
