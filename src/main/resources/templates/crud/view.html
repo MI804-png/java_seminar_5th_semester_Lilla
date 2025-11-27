@@ -48,30 +48,30 @@
                         </div>
                     </div>
                     
-                    <div class="detail-section" th:if="${person.vehicle != null}">
+                    <div class="detail-section" th:if="${vehicle != null}">
                         <h4><i class="fas fa-car"></i> Vehicle Information</h4>
                         <div class="detail-grid">
                             <div class="detail-item">
                                 <label>Registration Number:</label>
-                                <value th:text="${person.vehicle.regnum}">ABC123</value>
+                                <value th:text="${vehicle.regnum}">ABC123</value>
                             </div>
                             <div class="detail-item">
                                 <label>Brand:</label>
-                                <value th:text="${person.vehicle.brand}">Ford</value>
+                                <value th:text="${vehicle.brand}">Ford</value>
                             </div>
                             <div class="detail-item">
                                 <label>Color:</label>
-                                <value th:text="${person.vehicle.color}" 
-                                       th:style="'color: ' + ${person.vehicle.color == 'red' ? '#e74c3c' : 
-                                                                person.vehicle.color == 'blue' ? '#3498db' : 
-                                                                person.vehicle.color == 'white' ? '#7f8c8d' : '#2ecc71'}">
+                                <value th:text="${vehicle.color}" 
+                                       th:style="'color: ' + ${vehicle.color == 'red' ? '#e74c3c' : 
+                                                                vehicle.color == 'blue' ? '#3498db' : 
+                                                                vehicle.color == 'white' ? '#7f8c8d' : '#2ecc71'}">
                                     red
                                 </value>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="detail-section" th:if="${person.vehicle == null}">
+                    <div class="detail-section" th:if="${vehicle == null}">
                         <h4><i class="fas fa-car"></i> Vehicle Information</h4>
                         <div class="alert alert-info">
                             <i class="fas fa-info-circle"></i> No vehicle registered with this registration number.
@@ -154,7 +154,7 @@
                             <i class="fas fa-car"></i>
                         </div>
                         <div class="stat-content">
-                            <div class="stat-value" th:text="${person.vehicle != null ? 1 : 0}">0</div>
+                            <div class="stat-value" th:text="${vehicle != null ? 1 : 0}">0</div>
                             <div class="stat-label">Vehicles Owned</div>
                         </div>
                     </div>

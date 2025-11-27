@@ -1,6 +1,5 @@
 package com.vehiclereg.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -31,10 +30,8 @@ public class Person {
     @OneToMany(mappedBy = "person", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Phone> phones;
     
-    @JsonIgnore
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "regnumber", referencedColumnName = "regnum", insertable = false, updatable = false)
-    private Vehicle vehicle;
+    // Note: Vehicle relationship removed to avoid foreign key constraint issues
+    // Vehicles are linked by regnumber matching regnum, but no JPA relationship
     
     // Constructors
     public Person() {}
@@ -60,7 +57,4 @@ public class Person {
     
     public List<Phone> getPhones() { return phones; }
     public void setPhones(List<Phone> phones) { this.phones = phones; }
-    
-    public Vehicle getVehicle() { return vehicle; }
-    public void setVehicle(Vehicle vehicle) { this.vehicle = vehicle; }
 }

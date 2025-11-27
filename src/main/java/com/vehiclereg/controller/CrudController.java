@@ -1,7 +1,9 @@
 package com.vehiclereg.controller;
 
 import com.vehiclereg.entity.Person;
+import com.vehiclereg.entity.Vehicle;
 import com.vehiclereg.repository.PersonRepository;
+import com.vehiclereg.repository.VehicleRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -16,9 +18,11 @@ import java.util.Optional;
 public class CrudController {
 
     private final PersonRepository personRepository;
+    private final VehicleRepository vehicleRepository;
 
-    public CrudController(PersonRepository personRepository) {
+    public CrudController(PersonRepository personRepository, VehicleRepository vehicleRepository) {
         this.personRepository = personRepository;
+        this.vehicleRepository = vehicleRepository;
     }
 
     @GetMapping
@@ -142,8 +146,12 @@ public class CrudController {
             return "redirect:/crud";
         }
         
+        // Look up vehicle by matching registration number
+        Optional<Vehicle> vehicle = vehicleRepository.findById(person.get().getRegnumber());
+        
         model.addAttribute("pageTitle", "View Person");
         model.addAttribute("person", person.get());
+        model.addAttribute("vehicle", vehicle.orElse(null));
         return "crud/view";
     }
 }

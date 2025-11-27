@@ -46,23 +46,23 @@
                     <i class="fas fa-user"></i> Owner
                 </div>
                 <div class="detail-value">
-                    <span th:if="${vehicle.owner != null}">
-                        <strong th:text="${vehicle.owner.name}">Owner Name</strong>
-                        <span class="text-muted"> (Height: <span th:text="${vehicle.owner.height}">180</span> cm)</span>
+                    <span th:if="${owner != null}">
+                        <strong th:text="${owner.name}">Owner Name</strong>
+                        <span class="text-muted"> (Height: <span th:text="${owner.height}">180</span> cm)</span>
                     </span>
-                    <span th:if="${vehicle.owner == null}" class="text-muted">
+                    <span th:if="${owner == null}" class="text-muted">
                         <i class="fas fa-exclamation-circle"></i> No owner assigned
                     </span>
                 </div>
             </div>
             
-            <div th:if="${vehicle.owner != null and vehicle.owner.phones != null and !vehicle.owner.phones.isEmpty()}" class="detail-row">
+            <div th:if="${owner != null and owner.phones != null and !owner.phones.isEmpty()}" class="detail-row">
                 <div class="detail-label">
                     <i class="fas fa-phone"></i> Owner's Phone Numbers
                 </div>
                 <div class="detail-value">
                     <ul class="phone-list">
-                        <li th:each="phone : ${vehicle.owner.phones}">
+                        <li th:each="phone : ${owner.phones}">
                             <strong th:text="${phone.number}">+36-20-123-4567</strong>
                         </li>
                     </ul>
@@ -89,7 +89,7 @@
     </div>
 
     <!-- Related Information -->
-    <div th:if="${vehicle.owner == null}" class="card">
+    <div th:if="${owner == null}" class="card">
         <div class="card-header">
             <h3 class="card-title">
                 <i class="fas fa-link"></i> Link to Owner
@@ -104,7 +104,7 @@
         </div>
     </div>
     
-    <div th:if="${vehicle.owner != null}" class="card">
+    <div th:if="${owner != null}" class="card">
         <div class="card-header">
             <h3 class="card-title">
                 <i class="fas fa-user"></i> Owner Information
@@ -115,30 +115,30 @@
             <div class="col-6">
                 <h4><i class="fas fa-info-circle"></i> Owner Details</h4>
                 <ul>
-                    <li><strong>Name:</strong> <span th:text="${vehicle.owner.name}">Owner Name</span></li>
-                    <li><strong>Height:</strong> <span th:text="${vehicle.owner.height}">180</span> cm</li>
-                    <li><strong>Registration:</strong> <span th:text="${vehicle.owner.regnumber}">ABC123</span></li>
+                    <li><strong>Name:</strong> <span th:text="${owner.name}">Owner Name</span></li>
+                    <li><strong>Height:</strong> <span th:text="${owner.height}">180</span> cm</li>
+                    <li><strong>Registration:</strong> <span th:text="${owner.regnumber}">ABC123</span></li>
                 </ul>
             </div>
             
             <div class="col-6">
                 <h4><i class="fas fa-phone"></i> Contact Information</h4>
-                <ul th:if="${vehicle.owner.phones != null and !vehicle.owner.phones.isEmpty()}">
-                    <li th:each="phone : ${vehicle.owner.phones}">
+                <ul th:if="${owner.phones != null and !owner.phones.isEmpty()}">
+                    <li th:each="phone : ${owner.phones}">
                         <strong th:text="${phone.number}">+36-20-123-4567</strong>
                     </li>
                 </ul>
-                <p th:if="${vehicle.owner.phones == null or vehicle.owner.phones.isEmpty()}" class="text-muted">
+                <p th:if="${owner.phones == null or owner.phones.isEmpty()}" class="text-muted">
                     No phone numbers registered
                 </p>
             </div>
         </div>
         
         <div class="card-footer">
-            <a th:href="@{/crud/view/{id}(id=${vehicle.owner.id})}" class="btn btn-primary">
+            <a th:href="@{/crud/view/{id}(id=${owner.id})}" class="btn btn-primary">
                 <i class="fas fa-user"></i> View Owner Details
             </a>
-            <a th:href="@{/crud/edit/{id}(id=${vehicle.owner.id})}" class="btn btn-warning">
+            <a th:href="@{/crud/edit/{id}(id=${owner.id})}" class="btn btn-warning">
                 <i class="fas fa-edit"></i> Edit Owner
             </a>
         </div>

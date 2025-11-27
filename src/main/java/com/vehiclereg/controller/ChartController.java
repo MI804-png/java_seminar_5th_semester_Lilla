@@ -30,13 +30,17 @@ public class ChartController {
         for (Object[] stat : brandStats) {
             brandData.put((String) stat[0], (Long) stat[1]);
         }
+        System.out.println("Brand data: " + brandData);
 
         // Get vehicle color statistics
         List<Object[]> colorStats = vehicleRepository.countVehiclesByColor();
         Map<String, Long> colorData = new HashMap<>();
         for (Object[] stat : colorStats) {
             colorData.put((String) stat[0], (Long) stat[1]);
-        }        model.addAttribute("pageTitle", "Statistics & Charts");
+        }
+        System.out.println("Color data: " + colorData);
+        
+        model.addAttribute("pageTitle", "Statistics & Charts");
         model.addAttribute("brandData", brandData);
         model.addAttribute("colorData", colorData);
         model.addAttribute("totalPersons", personRepository.count());

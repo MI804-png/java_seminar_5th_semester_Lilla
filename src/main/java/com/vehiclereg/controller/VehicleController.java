@@ -28,8 +28,17 @@ public class VehicleController {
     @GetMapping
     public String vehicles(Model model) {
         List<Vehicle> vehicles = vehicleRepository.findAll();
+        
+        // Create a map of regnum -> owner for easy lookup in template
+        java.util.Map<String, Person> vehicleOwners = new java.util.HashMap<>();
+        for (Vehicle vehicle : vehicles) {
+            personRepository.findByRegnumber(vehicle.getRegnum())
+                .ifPresent(person -> vehicleOwners.put(vehicle.getRegnum(), person));
+        }
+        
         model.addAttribute("pageTitle", "Vehicle Management - CRUD");
         model.addAttribute("vehicles", vehicles);
+        model.addAttribute("vehicleOwners", vehicleOwners);
         return "vehicles/index";
     }
 
@@ -167,8 +176,12 @@ public class VehicleController {
             return "redirect:/vehicles";
         }
         
+        // Find the owner by matching registration number
+        Optional<Person> owner = personRepository.findByRegnumber(regnum);
+        
         model.addAttribute("pageTitle", "View Vehicle");
         model.addAttribute("vehicle", vehicle.get());
+        model.addAttribute("owner", owner.orElse(null));
         return "vehicles/view";
     }
 }

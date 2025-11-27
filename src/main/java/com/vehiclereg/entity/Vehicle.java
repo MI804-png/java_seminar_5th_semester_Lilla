@@ -1,6 +1,5 @@
 package com.vehiclereg.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 
@@ -20,9 +19,8 @@ public class Vehicle {
     @Column(length = 20, nullable = false)
     private String color;
     
-    @JsonIgnore
-    @OneToOne(mappedBy = "vehicle")
-    private Person owner;
+    // Note: Owner relationship removed to avoid bidirectional mapping issues
+    // Person owns vehicle via matching regnumber, but no JPA relationship
     
     // Constructors
     public Vehicle() {}
@@ -42,7 +40,4 @@ public class Vehicle {
     
     public String getColor() { return color; }
     public void setColor(String color) { this.color = color; }
-    
-    public Person getOwner() { return owner; }
-    public void setOwner(Person owner) { this.owner = owner; }
 }

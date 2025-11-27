@@ -32,10 +32,26 @@ public class DatabaseController {
         List<Vehicle> vehicles = vehicleRepository.findAll();
         List<Phone> phones = phoneRepository.findAll();
 
+        // Create maps for looking up vehicles and owners
+        java.util.Map<String, Vehicle> personVehicles = new java.util.HashMap<>();
+        java.util.Map<String, Person> vehicleOwners = new java.util.HashMap<>();
+        
+        for (Person person : persons) {
+            vehicleRepository.findById(person.getRegnumber())
+                .ifPresent(vehicle -> personVehicles.put(person.getRegnumber(), vehicle));
+        }
+        
+        for (Vehicle vehicle : vehicles) {
+            personRepository.findByRegnumber(vehicle.getRegnum())
+                .ifPresent(person -> vehicleOwners.put(vehicle.getRegnum(), person));
+        }
+
         model.addAttribute("pageTitle", "Database");
         model.addAttribute("persons", persons);
         model.addAttribute("vehicles", vehicles);
         model.addAttribute("phones", phones);
+        model.addAttribute("personVehicles", personVehicles);
+        model.addAttribute("vehicleOwners", vehicleOwners);
         model.addAttribute("totalPersons", persons.size());
         model.addAttribute("totalVehicles", vehicles.size());
         model.addAttribute("totalPhones", phones.size());

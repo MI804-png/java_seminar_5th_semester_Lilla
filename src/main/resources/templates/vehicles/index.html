@@ -11,7 +11,7 @@
             <div class="stat-label">Total Vehicles</div>
         </div>
         <div class="stat-card">
-            <div class="stat-number" th:text="${#lists.isEmpty(vehicles) ? 0 : #lists.size(#lists.toList(vehicles.?[color == 'Red']))}">0</div>
+            <div class="stat-number" th:text="${#lists.isEmpty(vehicles) ? 0 : #lists.size(#lists.toList(vehicles.?[color == 'red']))}">0</div>
             <div class="stat-label">Red Vehicles</div>
         </div>
         <div class="stat-card">
@@ -62,8 +62,10 @@
                                   th:text="${vehicle.color}">Red</span>
                         </td>
                         <td>
-                            <span th:if="${vehicle.owner != null}" th:text="${vehicle.owner.name}">Owner Name</span>
-                            <span th:if="${vehicle.owner == null}" class="text-muted"><i>No owner</i></span>
+                            <span th:if="${vehicleOwners.containsKey(vehicle.regnum)}" 
+                                  th:text="${vehicleOwners.get(vehicle.regnum).name}">Owner Name</span>
+                            <span th:unless="${vehicleOwners.containsKey(vehicle.regnum)}" 
+                                  class="text-muted"><i>No owner</i></span>
                         </td>
                         <td>
                             <a th:href="@{/vehicles/view/{regnum}(regnum=${vehicle.regnum})}" class="btn btn-sm btn-info">

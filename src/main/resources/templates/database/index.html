@@ -51,11 +51,11 @@
                         <td th:text="${person.regnumber}">ABC123</td>
                         <td th:text="${person.height}">175</td>
                         <td>
-                            <span th:if="${person.vehicle != null}" 
-                                  th:text="${person.vehicle.brand + ' (' + person.vehicle.color + ')'}">
+                            <span th:if="${personVehicles.containsKey(person.regnumber)}" 
+                                  th:text="${personVehicles.get(person.regnumber).brand + ' (' + personVehicles.get(person.regnumber).color + ')'}">
                                 Ford (red)
                             </span>
-                            <span th:if="${person.vehicle == null}" class="text-muted">
+                            <span th:unless="${personVehicles.containsKey(person.regnumber)}" class="text-muted">
                                 No vehicle
                             </span>
                         </td>
@@ -111,10 +111,10 @@
                             </span>
                         </td>
                         <td>
-                            <span th:if="${vehicle.owner != null}" th:text="${vehicle.owner.name}">
+                            <span th:if="${vehicleOwners.containsKey(vehicle.regnum)}" th:text="${vehicleOwners.get(vehicle.regnum).name}">
                                 John Smith
                             </span>
-                            <span th:if="${vehicle.owner == null}" class="text-muted">
+                            <span th:unless="${vehicleOwners.containsKey(vehicle.regnum)}" class="text-muted">
                                 No owner
                             </span>
                         </td>
